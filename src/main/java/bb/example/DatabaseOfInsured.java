@@ -1,24 +1,18 @@
 package bb.example;
 import java.util.ArrayList;
 
-/*
+/**
   This class serves as a database for searching and storing insured individuals in an ArrayList.
 
   @author pollib
  */
 
-/**
- * TO-DO-LIST DatabazePoj !!!!!!!!!!
- * * Modify upravPoj using setX()
- * Modify pridejPoj() to assign a unique ID to each new insured individual using a static method.
- * Modify smazPoj() method to delete only based on the ID number or date of creation.
- * Load/save to a file.
- */
 public class DatabaseOfInsured {
     private final ArrayList<InsuredPerson> insuredPersons;
 
+    // Creating an instance of an ArrayList representing the database
     public DatabaseOfInsured() {
-        insuredPersons = new ArrayList<>();     // Creating an instance of an ArrayList representing the database
+        insuredPersons = new ArrayList<>();
     }
 
     /**
@@ -36,11 +30,12 @@ public class DatabaseOfInsured {
     /**
      * Method prints out all insured individuals in the database
      */
-    public void writePerson() {
+    public void listOfAllPersons() {
         // Loop for printing all insured individuals
         for (InsuredPerson insuredPerson : insuredPersons) {
             System.out.println(insuredPerson);
         }
+        // Output if the database is empty
         if (insuredPersons.isEmpty()) {
             System.out.println("No insured individuals are recorded in the database");
         }
@@ -51,7 +46,7 @@ public class DatabaseOfInsured {
      *
      * @param inputName - specify which input the method should ask for
      */
-    public void findPerson(String inputName) {
+    public void findSpecificPerson(String inputName) {
         boolean found = false;
         // Loop for searching for a match in the user's input with names and last names stored in the database
         for (InsuredPerson insuredPerson : insuredPersons) {
@@ -72,20 +67,16 @@ public class DatabaseOfInsured {
      * Method for modifying the details of a specific insured individual
      * (CAUTION: watch for duplicate names)
      *
-     * @param inputName    - the name being searched
-     * @param inputSurname - the last name being searched
+     * @param id           - enter the ID of the person to modify
      * @param newName      - new name
      * @param newSurname   - new last name
      * @param newPhone     - new phone number
      */
-    public void editPerson(String inputName, String inputSurname, String newName, String newSurname, String newPhone) {
-        for (InsuredPerson insuredPerson : insuredPersons) {
-            if (inputName.equals(insuredPerson.getName()) && inputSurname.equals(insuredPerson.getSurname())) {
-                insuredPerson.setName(newName);
-                insuredPerson.setSurname(newSurname);
-                insuredPerson.setPhone(newPhone);
-            }
-        }
+    public void editPerson(int id, String newName, String newSurname, String newPhone) {
+        InsuredPerson person = findById(id);
+        person.setName(newName);
+        person.setSurname(newSurname);
+        person.setPhone(newPhone);
     }
 
     /**
@@ -105,4 +96,24 @@ public class DatabaseOfInsured {
             }
         }
     }
+
+    /**
+     * Method for searching a person by ID
+     *
+     * @param id - enter the ID of recorded person
+     * @return - InsuredPerson
+     */
+    public InsuredPerson findById(int id) {
+        InsuredPerson insuredPerson = null;
+        // Loop for searching for a match in the user's input with ID's stored in the database
+        for (InsuredPerson person : insuredPersons) {
+            if (person.getId() == id) {
+                insuredPerson = person;
+                System.out.println(person);
+            }
+        }
+        return insuredPerson;
+    }
+
+
 }

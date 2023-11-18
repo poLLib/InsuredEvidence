@@ -2,7 +2,6 @@ package bb.example;
 
 import java.util.Scanner;
 
-
 /**
  * This class is used for interaction between user input and the program (you can think of it as the front-end).
  * <p>
@@ -25,6 +24,7 @@ public class UserInterface {
     private final Scanner sc = new Scanner(System.in, "Windows-1250"); // Creating an instance for user input
     private final DatabaseOfInsured database;
 
+    // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
     } // Creating an instance of the database
@@ -68,7 +68,7 @@ public class UserInterface {
         String surname = validateLetters("surname");
 
         // Phone number validation, can only have 9 digits
-        String tel = validatePhone();
+        String tel = validateNumberOfPhone();
 
         // Age validation, the number must be in the range of 0-100
         int age = validateAge();
@@ -81,7 +81,7 @@ public class UserInterface {
      * The user requests to display all insured persons
      */
     public void displayAllInsured() {
-        database.writePerson(); // Display from the database
+        database.listOfAllPersons(); // Display from the database
     }
 
     /**
@@ -92,7 +92,7 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        database.findPerson(inputNameSurname); // Display from the database
+        database.findSpecificPerson(inputNameSurname); // Display from the database
     }
 
     /**
@@ -100,17 +100,33 @@ public class UserInterface {
      * (NOTE: Watch out for duplicate names)
      */
     public void modifyInsured() {
-        System.out.println("Enter the name you are looking for:");
-        String inputName = sc.nextLine().trim();
-        System.out.println("Enter the surname you are looking for:");
-        String inputSurname = sc.nextLine().trim();
+        int id;
+        boolean validationOfId = false;
+        while (!validationOfId) {
+            System.out.println("Enter the ID of the person you are looking for:");
+            String inputId = sc.nextLine().trim();
 
-        String newName = validateLetters("new name");
-        String newSurname = validateLetters("new surname");
-        String newTel = validatePhone();
+            for (char c : inputId.toCharArray()) {
+                validationOfId = validateNumbers(c); // Validate numbers through the ASCII table
+            }
+            if (validationOfId) {
+                id = Integer.parseInt(inputId);
 
-        System.out.println("The insured person has been modified.");
-        database.editPerson(inputName, inputSurname, newName, newSurname, newTel);
+                if (database.findById(id) == null) {
+                    System.out.println("The database does not contain the ID you entered");
+                    validationOfId = false;
+                } else {
+                    String newName = validateLetters("new name");
+                    String newSurname = validateLetters("new surname");
+                    String newTel = validateNumberOfPhone();
+
+                    database.editPerson(id, newName, newSurname, newTel);
+                    System.out.println("The insured person has been modified.");
+                }
+            } else {
+                System.out.println("The number of ID cannot contain letters or special characters, it must be as an absolute number");
+            }
+        }
     }
 
     /**
@@ -143,21 +159,21 @@ public class UserInterface {
      */
     public String validateLetters(String nameSurname) {
         String returnName = "";
-        boolean letterValidation = false;
+        boolean validationOfLetters = true;
 
-        while (!letterValidation) {
+        while (validationOfLetters) {
             System.out.printf("Enter the %s:\n", nameSurname);
             returnName = sc.nextLine().trim();
 
             for (char letter : returnName.toLowerCase().toCharArray()) {
                 if (!Character.isAlphabetic(letter) && letter != ' ' && letter != '-') {
-                    letterValidation = false;
+                    validationOfLetters = true;
                     break;
                 } else {
-                    letterValidation = true;
+                    validationOfLetters = false;
                 }
             }
-            if (!letterValidation)
+            if (validationOfLetters)
                 System.out.println("You must enter only letters of the Czech alphabet");
         }
         return returnName;
@@ -174,12 +190,13 @@ public class UserInterface {
     }
 
     /**
-     * Validation of numbers in a string through the ASCII table
+     * Validation of numbers in a string through the ASCII table (using method validateNumbers(char))
      * Validation of a 9-digit number
+     * Removing spaces between digits
      *
      * @return phone number (String)
      */
-    public String validatePhone() {
+    public String validateNumberOfPhone() {
         boolean numberValidation = false;
         String inputPhone = "";
 
@@ -204,13 +221,19 @@ public class UserInterface {
         return inputPhone;
     }
 
+    /**
+     * Method for validating numbers in age through the ASCII table (using method validateNumbers(char))
+     * Validate the range of age 0-100
+     *
+     * @return age (int)
+     */
     public int validateAge() {
         int age = 0;
         boolean ageValidation = false;
 
         while (!ageValidation) {
             System.out.println("Enter the age:");
-            String inputAge = sc.nextLine();
+            String inputAge = sc.nextLine().trim();
 
             for (char c : inputAge.toCharArray()) {
                 ageValidation = validateNumbers(c); // Validate numbers through the ASCII table
@@ -232,4 +255,5 @@ public class UserInterface {
         }
         return age;
     }
+
 }

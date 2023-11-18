@@ -10,12 +10,17 @@ public class InsuredPerson {
     private String surname;
     private String phone;
     private int age;
+    public static int nextId = 1;
+    private final int id;
 
     public InsuredPerson(String name, String surname, String phone, int age) {
         this.name = name;
         this.surname = surname;
         this.phone = phone;
         this.age = age;
+        id = nextId;
+        nextId++;
+
     }
 
     public String getName() {
@@ -50,9 +55,13 @@ public class InsuredPerson {
         this.age = age;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
-        return "Insured person: " + name + " " + surname + ", phone: " + phone + ", age: " + age;
+        return "Insured person: " + id + " - " + name + " " + surname + ", phone: " + phone + ", age: " + age;
     }
 }
 
