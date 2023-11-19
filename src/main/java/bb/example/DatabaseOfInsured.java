@@ -29,16 +29,20 @@ public class DatabaseOfInsured {
 
     /**
      * Method prints out all insured individuals in the database
+     *
+     * @return  - String of the list of all insured persons
      */
-    public void listOfAllPersons() {
+    public String listOfAllPersons() {
         // Loop for printing all insured individuals
+        String listOfAll = "";
         for (InsuredPerson insuredPerson : insuredPersons) {
-            System.out.println(insuredPerson);
+            listOfAll += insuredPerson.toString() + "\n";
         }
         // Output if the database is empty
         if (insuredPersons.isEmpty()) {
-            System.out.println("No insured individuals are recorded in the database");
+            return "No insured individuals are recorded in the database";
         }
+        return listOfAll;
     }
 
     /**
@@ -82,13 +86,12 @@ public class DatabaseOfInsured {
     /**
      * Method for deleting a specific insured individual
      *
-     * @param inputName    - enter the exact name
-     * @param inputSurname - enter the exact last name
+     * @param inputId - enter the exact ID of the person
      */
-    public void deletePerson(String inputName, String inputSurname) {
-        // Loop for searching for a match in the user's input with names and last names stored in the database
+    public void deletePerson(int inputId) {
+        // Loop for searching for a match in the user's input ID's stored in the database
         for (InsuredPerson insuredPerson : insuredPersons) {
-            if (inputName.equalsIgnoreCase(insuredPerson.getName()) && inputSurname.equalsIgnoreCase(insuredPerson.getSurname())) {
+            if (inputId == insuredPerson.getId()) {
                 insuredPersons.remove(insuredPerson);
                 System.out.println("The insured individual has been deleted");
             } else {
@@ -114,6 +117,4 @@ public class DatabaseOfInsured {
         }
         return insuredPerson;
     }
-
-
 }

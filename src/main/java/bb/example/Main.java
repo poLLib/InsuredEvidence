@@ -15,7 +15,7 @@ public class Main {
             System.out.printf(userInterface.displayMenu()); // Displays the main menu
             try {
                 int input = userInterface.menuSelection();
-                if (input >= 1 && input <= 6) {
+                if (input >= 1 && input <= 7) {
                     switch (input) {
 
                         /* Command to register a new insured person --> @name @surname @tel @age */
@@ -33,17 +33,20 @@ public class Main {
                         /* Command to delete a specific insured person */
                         case 5 -> userInterface.deleteInsured();
 
+                        /* Command to save the list of insured persons to the file.txt */
+                        case 6 -> userInterface.createFile();
+
                         /* Command to end the loop */
-                        case 6 -> {
+                        case 7 -> {
                             System.out.printf(userInterface.endProgram());
                             end = true;
                         }
                     }
                 } else {
-                    System.out.println("Enter a number from 1 to 6"); // Output for incorrect command
+                    System.out.println("Enter a number from 1 to 7"); // Output for incorrect command, out of range of 1 - 7
                 }
             } catch (Exception e) {
-                System.out.println("Enter a number from 1 to 6"); // Output for incorrect command
+                System.out.println("Enter a number from 1 to 7"); // Output for incorrect command, null or symbols
             }
         }
     }
