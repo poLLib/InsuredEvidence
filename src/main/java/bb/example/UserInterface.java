@@ -31,10 +31,6 @@ public class UserInterface {
     // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
-        database.addPerson("bill", "poblill", "375955179", 35);
-        database.addPerson("dfg", "poblill", "375955179", 35);
-        database.addPerson("hre", "poblill", "375955179", 35);
-        database.addPerson("adsf", "poblill", "375955179", 35);
     }
 
     /**
