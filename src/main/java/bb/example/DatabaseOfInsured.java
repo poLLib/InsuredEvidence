@@ -94,8 +94,7 @@ public class DatabaseOfInsured {
             if (inputId == insuredPerson.getId()) {
                 insuredPersons.remove(insuredPerson);
                 System.out.println("The insured individual has been deleted");
-            } else {
-                System.out.println("The insured individual could not be found");
+                break;
             }
         }
     }

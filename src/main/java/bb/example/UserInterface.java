@@ -73,8 +73,8 @@ public class UserInterface {
      */
     public void addInsured() {
         // Validation methods returning a string for name and surname
-        String name = validateLetters("name");
-        String surname = validateLetters("surname");
+        String name = validateLettersInName("name");
+        String surname = validateLettersInName("surname");
 
         // Phone number validation, can only have 9 digits
         String tel = validateNumberOfPhone();
@@ -108,19 +108,7 @@ public class UserInterface {
      * The method requests data for modifying an insured person, which is subsequently processed by the database
      * (NOTE: Watch out for duplicate names)
      */
-/*    public void modifyInsured() {
-        int id;
-            System.out.println("Enter the ID of the person you are looking for:");
-            id = validateId(sc.nextLine().trim());
-            String newName = validateLetters("new name");
-            String newSurname = validateLetters("new surname");
-            String newTel = validateNumberOfPhone();
 
-            database.editPerson(id, newName, newSurname, newTel);
-            System.out.println("The insured person has been modified.");
-
-    }    public void modifyInsured() {
- */
     public void modifyInsured() {
         int id;
         boolean validationOfId = false;
@@ -138,8 +126,8 @@ public class UserInterface {
                     System.out.println("The database does not contain the ID you entered");
                     validationOfId = false;
                 } else {
-                    String newName = validateLetters("new name");
-                    String newSurname = validateLetters("new surname");
+                    String newName = validateLettersInName("new name");
+                    String newSurname = validateLettersInName("new surname");
                     String newTel = validateNumberOfPhone();
 
                     database.editPerson(id, newName, newSurname, newTel);
@@ -177,7 +165,7 @@ public class UserInterface {
      * @param nameSurname - Specify whether you want to ask for a name or surname
      * @return - name or surname
      */
-    public String validateLetters(String nameSurname) {
+    public String validateLettersInName(String nameSurname) {
         String returnName = "";
         boolean validationOfLetters = true;
 
@@ -194,7 +182,7 @@ public class UserInterface {
                 }
             }
             if (validationOfLetters)
-                System.out.println("You must enter only letters of the Czech alphabet");
+                System.out.println("You must enter only letters of the alphabet");
         }
         return returnName;
     }
@@ -216,24 +204,36 @@ public class UserInterface {
      * @param inputId - The number of ID given by user
      * @return - ID (int)
      */
-    public int validateId(String inputId) {
-        int id = 0;
-        boolean validationOfId = false;
-        while (!validationOfId) {
-            for (char c : inputId.toCharArray()) {
-                validationOfId = validateNumbers(c); // Validate numbers through the ASCII table
-            }
-            if (!validationOfId) {
-                id = Integer.parseInt(inputId);
 
-                if (database.findById(id) == null) {
-                    System.out.println("The database does not contain the ID you entered");
-                    validationOfId = false;
-                } else {
-                    System.out.println("The number of ID cannot contain letters or special characters, it must be as an absolute number");
-                }
+    public int validateId(String inputId) {
+        boolean hasDigits = false;
+
+        for (char c : inputId.toCharArray()) {
+            if (Character.isDigit(c)) {
+                hasDigits = true;
+                break;
             }
         }
+
+        if (!hasDigits) {
+            System.out.println("The input does not contain any digits. Please enter a valid ID.");
+            return 0; // nebo jiná hodnota, kterou chcete vrátit v případě neplatného vstupu
+        }
+
+        int id;
+
+        try {
+            id = Integer.parseInt(inputId);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID format. Please enter a valid number.");
+            return 0; // nebo jiná hodnota, kterou chcete vrátit v případě neplatného čísla
+        }
+
+        if (database.findById(id) == null) {
+            System.out.println("The database does not contain the ID you entered");
+            return 0; // nebo jiná hodnota, kterou chcete vrátit v případě neexistujícího ID v databázi
+        }
+
         return id;
     }
 
@@ -264,6 +264,7 @@ public class UserInterface {
                 return inputPhone;
             } else {
                 System.out.println("Enter a 9-digit number");
+                numberValidation = false;
             }
         }
         return inputPhone;
@@ -293,7 +294,7 @@ public class UserInterface {
             } else {
                 age = Integer.parseInt(inputAge);
             }
-            if (age < 0) {
+            if (age <= 0) {
                 ageValidation = false;
                 System.out.println("Enter the age as an absolute number");
             } else if (age > 100) {
