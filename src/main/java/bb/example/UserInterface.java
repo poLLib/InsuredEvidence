@@ -105,8 +105,8 @@ public class UserInterface {
      */
     public void addInsured() {
         // Validation methods returning a string for name and surname
-        String name = validateLettersInName("name");
-        String surname = validateLettersInName("surname");
+        String name = validateLetters("name");
+        String surname = validateLetters("surname");
 
         // Phone number validation, can only have 9 digits
         String tel = validateNumberOfPhone();
@@ -170,8 +170,8 @@ public class UserInterface {
                     System.out.println("The database does not contain the ID you entered");
                     validationOfId = false;
                 } else {
-                    String newName = validateLettersInName("new name");
-                    String newSurname = validateLettersInName("new surname");
+                    String newName = validateLetters("new name");
+                    String newSurname = validateLetters("new surname");
                     String newTel = validateNumberOfPhone();
 
                     database.editPerson(id, newName, newSurname, newTel);
@@ -207,29 +207,36 @@ public class UserInterface {
     /**
      * Method for validating letters using the isAlphabetic() method on the Character class
      *
-     * @param nameSurname - Specify whether you want to ask for a name or surname
+     * @param name - Specify whether you want to ask for a name or surname
      * @return - name or surname
      */
-    public String validateLettersInName(String nameSurname) {
-        String returnName = "";
-        boolean validationOfLetters = true;
+    public String validateLetters(String name) {
+        String returnName;
 
-        while (validationOfLetters) {
-            System.out.printf("Enter the %s:\n", nameSurname);
+        do {
+            System.out.printf("Enter the %s:\n", name);
             returnName = sc.nextLine().trim();
 
-            for (char letter : returnName.toLowerCase().toCharArray()) {
-                if (!Character.isAlphabetic(letter) && letter != ' ' && letter != '-') {
-                    validationOfLetters = true;
-                    break;
-                } else {
-                    validationOfLetters = false;
-                }
-            }
-            if (validationOfLetters)
+            if (containsInvalidCharacters(returnName)) {
                 System.out.println("You must enter only letters of the alphabet");
-        }
+            }
+
+        } while (containsInvalidCharacters(returnName));
+
         return returnName;
+    }
+
+    /**
+     * @param input - String to be validated for letters
+     * @return true for invalid characters
+     */
+    private boolean containsInvalidCharacters(String input) {
+        for (char letter : input.toLowerCase().toCharArray()) {
+            if (!(Character.isAlphabetic(letter) || letter == ' ' || letter == '-')) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
