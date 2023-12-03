@@ -1,10 +1,11 @@
 package bb.example;
+
 import java.util.ArrayList;
 
 /**
-  This class serves as a database for searching and storing insured individuals in an ArrayList.
-
-  @author pollib
+ * This class serves as a database for searching and storing insured individuals in an ArrayList.
+ *
+ * @author pollib
  */
 
 public class DatabaseOfInsured {
@@ -28,53 +29,38 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method prints out all insured individuals in the database
+     * Method returns all insured individuals in the database
      *
-     * @return  - String of the list of all insured persons
+     * @return - List of insured persons
      */
-    public String listOfAllPersons() {
-        // Loop for printing all insured individuals
-        String listOfAll = "";
-        for (InsuredPerson insuredPerson : insuredPersons) {
-            listOfAll += insuredPerson.toString() + "\n";
-        }
-        // Output if the database is empty
-        if (insuredPersons.isEmpty()) {
-            return "No insured individuals are recorded in the database";
-        }
-        return listOfAll;
+    public ArrayList<InsuredPerson> listOfAllPersons() {
+        return new ArrayList<>(insuredPersons);
     }
 
     /**
-     * Method finds and prints a specific insured individual
+     * Method finds specific insured individual
      *
-     * @param inputName - specify which input the method should ask for
+     * @param inputName - specify which name or part of name the method should ask for
      */
-    public void findSpecificPerson(String inputName) {
-        boolean found = false;
+    public ArrayList<InsuredPerson> findSpecificPerson(String inputName) {
+        ArrayList<InsuredPerson> foundPerson = new ArrayList<>();
+
         // Loop for searching for a match in the user's input with names and last names stored in the database
         for (InsuredPerson insuredPerson : insuredPersons) {
             if (insuredPerson.getName().contains(inputName) || insuredPerson.getSurname().contains(inputName)) {
-                System.out.println(insuredPerson);
-                found = true;
+                foundPerson.add(insuredPerson);
             }
         }
-        // Output if the database is empty or the searched insured individual is not recorded
-        if (insuredPersons.isEmpty()) {
-            System.out.println("The database is empty");
-        } else if (!found) {
-            System.out.println("This name is not recorded in the database");
-        }
+        return foundPerson;
     }
 
     /**
      * Method for modifying the details of a specific insured individual
-     * (CAUTION: watch for duplicate names)
      *
-     * @param id           - enter the ID of the person to modify
-     * @param newName      - new name
-     * @param newSurname   - new last name
-     * @param newPhone     - new phone number
+     * @param id         - enter the ID of the person to modify
+     * @param newName    - new name
+     * @param newSurname - new last name
+     * @param newPhone   - new phone number
      */
     public void editPerson(int id, String newName, String newSurname, String newPhone) {
         InsuredPerson person = findById(id);
@@ -84,19 +70,19 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method for deleting a specific insured individual
+     * Method for deleting a specific insured individual by ID
      *
      * @param inputId - enter the exact ID of the person
      */
-    public void deletePerson(int inputId) {
+    public boolean deletePerson(int inputId) {
         // Loop for searching for a match in the user's input ID's stored in the database
         for (InsuredPerson insuredPerson : insuredPersons) {
             if (inputId == insuredPerson.getId()) {
                 insuredPersons.remove(insuredPerson);
-                System.out.println("The insured individual has been deleted");
-                break;
+                return true; // Deleting successful
             }
         }
+        return false; // Person was not found
     }
 
     /**

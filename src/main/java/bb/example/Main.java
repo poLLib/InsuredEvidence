@@ -32,9 +32,9 @@ public class Main {
 
                         /* Command to delete a specific insured person */
                         case 5 -> userInterface.deleteInsured();
-
-                        /* Command to save the list of insured persons to the file.txt */
-                        case 6 -> userInterface.createFile();
+                        /*
+                         *//* Command to save the list of insured persons to the file.txt *//*
+                        case 6 -> userInterface.createFile();*/
 
                         /* Command to end the loop */
                         case 7 -> {

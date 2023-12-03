@@ -1,9 +1,6 @@
 package bb.example;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.nio.file.Files;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 
 /**
@@ -25,12 +22,16 @@ import java.util.Scanner;
  * @author pollib
  */
 public class UserInterface {
-    private final Scanner sc = new Scanner(System.in, "Windows-1250"); // Creating an instance for user input
+    private final Scanner sc = new Scanner(System.in, Charset.defaultCharset()); // Creating an instance for user input
     private final DatabaseOfInsured database;
 
     // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
+        database.addPerson("bill", "pollib", "456456456", 54);
+        database.addPerson("ala", "dffff", "456456456", 54);
+        database.addPerson("bala", "zrd", "456456456", 54);
+        database.addPerson("kaki", "pollib", "456456456", 54);
     }
 
     /**
@@ -86,7 +87,12 @@ public class UserInterface {
      * The user requests to display all insured persons
      */
     public void displayAllInsured() {
-        System.out.println(database.listOfAllPersons()); // Display from the database
+        // Output if the database is empty
+        if (database.listOfAllPersons().isEmpty()) {
+            System.out.println("\nNo insured individuals are recorded in the database");
+        }
+        System.out.println("\n" + database.listOfAllPersons()); // Display from the database
+
     }
 
     /**
@@ -97,12 +103,19 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
+        System.out.println(database.findSpecificPerson(inputNameSurname));
+
+        // Output if the database is empty or the searched insured individual is not recorded
+        if (database.findSpecificPerson(inputNameSurname).isEmpty()) {
+            System.out.println("This name is not recorded in the database");
+        }
+
         database.findSpecificPerson(inputNameSurname); // Display from the database
+
     }
 
     /**
      * The method requests data for modifying an insured person, which is subsequently processed by the database
-     * (NOTE: Watch out for duplicate names)
      */
 
     public void modifyInsured() {
@@ -140,10 +153,11 @@ public class UserInterface {
      */
     public void deleteInsured() {
 
-        System.out.println("Enter the ID of the person you want to remove from database:");
-        String inputId = sc.nextLine().trim();
-
-        database.deletePerson(validateId(inputId)); // Delete from the database
+        if (database.deletePerson(validateId())) {
+            System.out.println("The insured individual has been deleted");
+        } else {
+            System.out.println("Person with the given ID not found");
+        }
     }
 
     /**
@@ -197,39 +211,24 @@ public class UserInterface {
      * Method for validation of ID's
      * The numbers and if the ID exists in the database
      *
-     * @param inputId - The number of ID given by user
      * @return - ID (int)
      */
 
-    public int validateId(String inputId) {
-        boolean hasDigits = false;
+    private int validateId() {
+        int id = 0;
+        boolean validation = false;
+        while (!validation) {
+            System.out.println("Enter the ID of the person you want to remove from database:");
+            String inputId = sc.nextLine().trim();
 
-        for (char c : inputId.toCharArray()) {
-            if (Character.isDigit(c)) {
-                hasDigits = true;
-                break;
+            try {
+                id = Integer.parseInt(inputId);
+                validation = true;
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid ID format. Please enter a valid number.");
             }
         }
-
-        if (!hasDigits) {
-            System.out.println("The input does not contain any digits. Please enter a valid ID.");
-            return 0; // nebo jiná hodnota, kterou chcete vrátit v případě neplatného vstupu
-        }
-
-        int id;
-
-        try {
-            id = Integer.parseInt(inputId);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid ID format. Please enter a valid number.");
-            return 0; // nebo jiná hodnota, kterou chcete vrátit v případě neplatného čísla
-        }
-
-        if (database.findById(id) == null) {
-            System.out.println("The database does not contain the ID you entered");
-            return 0; // nebo jiná hodnota, kterou chcete vrátit v případě neexistujícího ID v databázi
-        }
-
         return id;
     }
 
@@ -300,11 +299,47 @@ public class UserInterface {
         }
         return age;
     }
+}
 
-    /**
-     * The process of creating a new *.txt file of the insured persons either to the original location or one of user's choice
-     * Using Java.io
-     */
+/**
+ * The process of creating a new *.txt file of the insured persons either to the original location or one of user's choice
+ * Using Java.io
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ *
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ *//*
     public void createFile() {
         System.out.println("How would you like to name your file?");
         String inputNameOfFile = sc.nextLine().trim().toLowerCase() + ".txt";
@@ -329,13 +364,13 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Method to save the file to the original path
-     * For Windows users -> C:\User
-     * For Linux and Apple users -> /home/user/
-     *
-     * @param nameOfFile - The input of the user to name the file
-     */
+    *//**
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ *
+ * @param nameOfFile - The input of the user to name the file
+ *//*
     private void saveFile(String nameOfFile) {
         File file = new File(System.getProperty("user.home") + File.separator + "Database of Insured Persons" + File.separator + nameOfFile);
         file.getParentFile().mkdirs();
@@ -348,13 +383,13 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Method to save the file to the new path
-     * For Windows users -> C:\User\...
-     * For Linux and Apple users -> /home/user/...
-     *
-     * @param absolutePath - The input of the user to change tha path to the file
-     */
+    *//**
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ *
+ * @param absolutePath - The input of the user to change tha path to the file
+ *//*
     private void saveFileNewPath(String absolutePath) {
         File file = new File(absolutePath);
         file.getParentFile().mkdirs();
@@ -367,12 +402,15 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Method to change the path to the file
-     *
-     * @param - inputNameOfFile
-     * @return - File with changed path
-     */
+    *//**
+ * Method to change the path to the file
+ *
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ *//*
     private File userPath(String inputNameOfFile) {
         System.out.println("You can choose the path, create a new folders, examples:\n" +
                 "For Windows -> C:\\[user]\\[new name of folder]\\\n" +
@@ -384,11 +422,11 @@ public class UserInterface {
         return file;
     }
 
-    /**
-     * Handles the existence of a file if already exists
-     *
-     * @param file - represents the file to be checked and potentially modified
-     */
+    *//**
+ * Handles the existence of a file if already exists
+ *
+ * @param file - represents the file to be checked and potentially modified
+ *//*
     private void handleFileExistence(File file) {
         try {
             while (Files.exists(file.toPath())) {
@@ -413,3 +451,4 @@ public class UserInterface {
     }
 }
 
+*/
