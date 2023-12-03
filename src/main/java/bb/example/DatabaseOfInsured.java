@@ -1,6 +1,7 @@
 package bb.example;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class serves as a database for searching and storing insured individuals in an ArrayList.
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 
 public class DatabaseOfInsured {
     private final ArrayList<InsuredPerson> insuredPersons;
+    private int nextId = 1;
 
     // Creating an instance of an ArrayList representing the database
     public DatabaseOfInsured() {
@@ -25,7 +27,10 @@ public class DatabaseOfInsured {
      * @param age     - age of the insured individual
      */
     public void addPerson(String name, String surname, String phone, int age) {
-        insuredPersons.add(new InsuredPerson(name, surname, phone, age));
+        InsuredPerson newPerson = new InsuredPerson(name, surname, phone, age);
+        newPerson.setId(nextId);
+        nextId++;
+        insuredPersons.add(newPerson);
     }
 
     /**
@@ -33,7 +38,7 @@ public class DatabaseOfInsured {
      *
      * @return - List of insured persons
      */
-    public ArrayList<InsuredPerson> listOfAllPersons() {
+    public List<InsuredPerson> listOfAllPersons() {
         return new ArrayList<>(insuredPersons);
     }
 
@@ -42,7 +47,7 @@ public class DatabaseOfInsured {
      *
      * @param inputName - specify which name or part of name the method should ask for
      */
-    public ArrayList<InsuredPerson> findSpecificPerson(String inputName) {
+    public List<InsuredPerson> findSpecificPerson(String inputName) {
         ArrayList<InsuredPerson> foundPerson = new ArrayList<>();
 
         // Loop for searching for a match in the user's input with names and last names stored in the database

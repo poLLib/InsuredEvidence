@@ -10,6 +10,6 @@ public class Main {
         /* Start of the user session loop
            The user selects a command by entering a number
          */
-        userInterface.menuSelection();
+        userInterface.menuSelectionLoop();
     }
 }

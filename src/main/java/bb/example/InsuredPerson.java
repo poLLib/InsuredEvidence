@@ -10,16 +10,14 @@ public class InsuredPerson {
     private String surname;
     private String phone;
     private int age;
-    public static int nextId = 1;
-    private final int id;
+    private int id;
 
     public InsuredPerson(String name, String surname, String phone, int age) {
         this.name = name;
         this.surname = surname;
         this.phone = phone;
         this.age = age;
-        id = nextId;
-        nextId++;
+
 
     }
 
@@ -57,6 +55,10 @@ public class InsuredPerson {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
