@@ -34,7 +34,6 @@ public class UserInterface {
     /**
      * Menu selection
      *
-     * @return - returns the numeric input
      */
     public void menuSelectionLoop() {
         boolean end = false;
@@ -148,7 +147,6 @@ public class UserInterface {
     /**
      * The method requests data for modifying an insured person, which is subsequently processed by the database
      */
-
     public void modifyInsured() {
         int id;
         boolean validationOfId = false;
@@ -156,9 +154,8 @@ public class UserInterface {
             System.out.println("Enter the ID of the person you are looking for:");
             String inputId = sc.nextLine().trim();
 
-            for (char c : inputId.toCharArray()) {
-                validationOfId = validateNumbers(c); // Validate numbers through the ASCII table
-            }
+            validationOfId = validateNumbers(inputId); // Validate numbers through the ASCII table
+
             if (validationOfId) {
                 id = Integer.parseInt(inputId);
 
@@ -236,13 +233,19 @@ public class UserInterface {
     }
 
     /**
-     * Method for validating numbers through the ASCII table
+     * Method for validating numbers
      *
-     * @param c - individual character in the string
-     * @return - true = all characters in the string are numbers
+     * @param input - String to be checked for letters by each character
+     * @return - true = the character is a number
      */
-    public boolean validateNumbers(char c) {
-        return ((int) c >= 48) && ((int) c <= 57);
+    public boolean validateNumbers(String input) {
+        boolean validation = true;
+        for (char c : input.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                validation = false;
+            }
+        }
+        return validation;
     }
 
     /**
@@ -285,9 +288,7 @@ public class UserInterface {
             System.out.println("Enter the phone number (without the area code):");
             inputPhone = sc.nextLine().replace(" ", "").trim();
 
-            for (char c : inputPhone.toCharArray()) {
-                numberValidation = validateNumbers(c); // Validate numbers through the ASCII table
-            }
+            numberValidation = validateNumbers(inputPhone);
 
             if (!numberValidation) {
                 System.out.println("The phone number cannot contain letters or special characters");
@@ -317,9 +318,7 @@ public class UserInterface {
             System.out.println("Enter the age:");
             String inputAge = sc.nextLine().trim();
 
-            for (char c : inputAge.toCharArray()) {
-                ageValidation = validateNumbers(c); // Validate numbers through the ASCII table
-            }
+            ageValidation = validateNumbers(inputAge); // Validate numbers through the ASCII table
 
             // Validation of the range 0-100
             if (!ageValidation) {
