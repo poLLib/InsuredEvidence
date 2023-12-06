@@ -274,7 +274,7 @@ public class UserInterface {
     }
 
     /**
-     * Validation of numbers in a string through the ASCII table (using method validateNumbers(char))
+     * Validation of numbers in a String
      * Validation of a 9-digit number
      * Removing spaces between digits
      *
@@ -282,30 +282,27 @@ public class UserInterface {
      */
     public String validateNumberOfPhone() {
         boolean numberValidation = false;
-        String inputPhone = "";
+        String inputPhoneNumber = "";
 
         while (!numberValidation) {
             System.out.println("Enter the phone number (without the area code):");
-            inputPhone = sc.nextLine().replace(" ", "").trim();
+            inputPhoneNumber = sc.nextLine().replace(" ", "").trim();
 
-            numberValidation = validateNumbers(inputPhone);
+            numberValidation = validateNumbers(inputPhoneNumber);
 
             if (!numberValidation) {
                 System.out.println("The phone number cannot contain letters or special characters");
             }
-            if (inputPhone.length() == 9) {
-                numberValidation = true;
-                return inputPhone;
-            } else {
-                System.out.println("Enter a 9-digit number");
+            if (!(inputPhoneNumber.length() == 9)) {
                 numberValidation = false;
+                System.out.println("Enter a 9-digit number");
             }
         }
-        return inputPhone;
+        return inputPhoneNumber;
     }
 
     /**
-     * Method for validating numbers in age through the ASCII table (using method validateNumbers(char))
+     * Method for validating numbers in age
      * Validate the range of age 0-100
      *
      * @return age (int)
@@ -318,13 +315,14 @@ public class UserInterface {
             System.out.println("Enter the age:");
             String inputAge = sc.nextLine().trim();
 
-            ageValidation = validateNumbers(inputAge); // Validate numbers through the ASCII table
+            if (validateNumbers(inputAge)) {
+                age = Integer.parseInt(inputAge);
+                ageValidation = true;
+            }
 
             // Validation of the range 0-100
             if (!ageValidation) {
                 System.out.println("Age cannot contain letters or special characters");
-            } else {
-                age = Integer.parseInt(inputAge);
             }
             if (age <= 0) {
                 ageValidation = false;
