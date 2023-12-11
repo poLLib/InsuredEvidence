@@ -1,0 +1,4 @@
+Insured person: 1 - bill poblill, phone: 375955179, age: 35
+Insured person: 2 - dfg poblill, phone: 375955179, age: 35
+Insured person: 3 - hre poblill, phone: 375955179, age: 35
+Insured person: 4 - adsf poblill, phone: 375955179, age: 35
