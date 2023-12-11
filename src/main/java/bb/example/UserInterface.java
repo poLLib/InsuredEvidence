@@ -1,6 +1,5 @@
 package bb.example;
 
-import java.nio.charset.Charset;
 import java.util.Scanner;
 
 /**
@@ -23,7 +22,7 @@ import java.util.Scanner;
  * @author pollib
  */
 public class UserInterface {
-    private final Scanner sc = new Scanner(System.in, Charset.defaultCharset()); // Creating an instance for user input
+    private final Scanner sc = new Scanner(System.in); // Creating an instance for user's input
     private final DatabaseOfInsured database;
 
     // Creating an instance of the database
@@ -33,12 +32,10 @@ public class UserInterface {
 
     /**
      * Menu selection
-     *
      */
     public void menuSelectionLoop() {
-        boolean end = false;
-        String errorMessage = "Enter a number from 1 to 7";
-        while (!end) {
+        boolean isEndProgram = false;
+        while (!isEndProgram) {
             System.out.println("""
 
                     --------Insured Records----------
@@ -53,61 +50,40 @@ public class UserInterface {
                     7 - End
                     --------------------------------------
                     Enter the action number:""");
-            try {
-                int input = Integer.parseInt(sc.nextLine().trim());
-                if (input >= 1 && input <= 7) {
-                    Options selectedOption = Options.values()[input - 1];
 
-                    switch (selectedOption) {
-                        case ONE -> addInsured();
-                        case TWO -> displayAllInsured();
-                        case THREE -> displayInsured();
-                        case FOUR -> modifyInsured();
-                        case FIVE -> deleteInsured();
+            int inputOption = enterNumber();
+
+            switch (inputOption) {
+                case 1 -> addInsured();
+                case 2 -> displayAllInsured();
+                case 3 -> displayInsured();
+                case 4 -> modifyInsured();
+                case 5 -> deleteInsured();
 /*
-                        case SIX -> createFile();
+                        case 6 -> createFile();
 */
-                        case SEVEN -> {
-                            System.out.printf(endProgram());
-                            end = true;
-                        }
-                        default -> System.out.println("Unknown action");
-                    }
-                } else {
-                    System.out.println(errorMessage); // Output for incorrect command, out of range of 1 - 7
+                case 7 -> {
+                    System.out.printf(endProgram());
+                    isEndProgram = true;
                 }
-            } catch (Exception e) {
-                System.out.println(errorMessage); // Output for incorrect command, null or symbols
+                default -> errorMessage(Error.MENU);
             }
         }
     }
 
     /**
-     * Enum representing different options for managing insured records.
-     * Each option is associated with a numeric value and a corresponding action.
-     */
-    enum Options {
-        ONE,
-        TWO,
-        THREE,
-        FOUR,
-        FIVE,
-        SIX,
-        SEVEN
-    }
-    /**
      * User input to add a new insured person to the database
      */
     public void addInsured() {
         // Validation methods returning a string for name and surname
-        String name = validateLetters("name");
-        String surname = validateLetters("surname");
+        String name = enterLetters("name");
+        String surname = enterLetters("surname");
 
         // Phone number validation, can only have 9 digits
-        String tel = validateNumberOfPhone();
+        String tel = enterNumberOfPhone();
 
         // Age validation, the number must be in the range of 0-100
-        int age = validateAge();
+        int age = enterAge();
 
         database.addPerson(name, surname, tel, age); // Add the insured person to the database
         System.out.println("A new insured person has been added.");
@@ -148,28 +124,23 @@ public class UserInterface {
      * The method requests data for modifying an insured person, which is subsequently processed by the database
      */
     public void modifyInsured() {
-        int id;
-        boolean validationOfId = false;
-        while (!validationOfId) {
+        while (true) {
             System.out.println("Enter the ID of the person you are looking for:");
-            String inputId = sc.nextLine().trim();
+            int inputId = enterNumber();
+            boolean isValid = false;
 
-            validationOfId = validateNumbers(inputId); // Validate numbers through the ASCII table
-
-            if (validationOfId) {
-                id = Integer.parseInt(inputId);
-
-                if (database.findById(id) == null) {
+            if (inputId >= 0) {
+                if (database.findById(inputId) == null) {
                     System.out.println("The database does not contain the ID you entered");
-                    validationOfId = false;
                 } else {
-                    String newName = validateLetters("new name");
-                    String newSurname = validateLetters("new surname");
-                    String newTel = validateNumberOfPhone();
+                    String newName = enterLetters("new name");
+                    String newSurname = enterLetters("new surname");
+                    String newTel = enterNumberOfPhone();
 
-                    database.editPerson(id, newName, newSurname, newTel);
+                    database.editPerson(inputId, newName, newSurname, newTel);
                     System.out.println("The insured person has been modified.");
                 }
+                break; // exit the loop if the ID is valid
             } else {
                 System.out.println("The number of ID cannot contain letters or special characters, it must be as an absolute number");
             }
@@ -180,8 +151,10 @@ public class UserInterface {
      * Deletion of an insured person by entering the ID
      */
     public void deleteInsured() {
+        System.out.println("Enter the ID of the person you would like to delete");
+        int inputId = enterNumber();
 
-        if (database.deletePerson(validateId())) {
+        if (database.deletePerson(inputId)) {
             System.out.println("The insured individual has been deleted");
         } else {
             System.out.println("Person with the given ID not found");
@@ -203,7 +176,7 @@ public class UserInterface {
      * @param name - Specify whether you want to ask for a name or surname
      * @return - name or surname
      */
-    public String validateLetters(String name) {
+    public String enterLetters(String name) {
         String returnName;
 
         do {
@@ -232,13 +205,50 @@ public class UserInterface {
         return false;
     }
 
+
     /**
-     * Method for validating numbers
+     * Method validate number of user's input
      *
-     * @param input - String to be checked for letters by each character
-     * @return - true = the character is a number
+     * @return - number (int)
      */
-    public boolean validateNumbers(String input) {
+    public int enterNumber() {
+        while (true) {
+            System.out.println("Enter a number");
+            int number = 0;
+            String inputNumber = sc.nextLine().trim();
+            boolean isValid = true;
+
+            if (isValidNumber(inputNumber)) {
+                number = Integer.parseInt(inputNumber);
+                return number;
+            } else {
+                errorMessage(Error.NUMBER);
+            }
+        }
+    }
+
+    /**
+     * Validation of numbers in a String
+     * Validation of a 9-digit number
+     *
+     * @return phone number (String)
+     */
+    public String enterNumberOfPhone() {
+        while (true) {
+            System.out.println("Enter the phone number (9 digits without the area code):");
+            String inputPhoneNumber = sc.nextLine().trim();
+
+            if (!isValidNumber(inputPhoneNumber)) {
+                System.out.println("The phone number cannot contain letters or special characters and must be 9-digit number");
+            } else if (inputPhoneNumber.length() != 9) {
+                System.out.println("Enter a 9-digit number");
+            } else {
+                return inputPhoneNumber;
+            }
+        }
+    }
+
+    public boolean isValidNumber(String input) {
         boolean validation = true;
         for (char c : input.toCharArray()) {
             if (!Character.isDigit(c)) {
@@ -249,91 +259,38 @@ public class UserInterface {
     }
 
     /**
-     * Method for validation of ID's
-     * The numbers and if the ID exists in the database
-     *
-     * @return - ID (int)
-     */
-
-    private int validateId() {
-        int id = 0;
-        boolean validation = false;
-        while (!validation) {
-            System.out.println("Enter the ID of the person you want to remove from database:");
-            String inputId = sc.nextLine().trim();
-
-            try {
-                id = Integer.parseInt(inputId);
-                validation = true;
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid ID format. Please enter a valid number.");
-            }
-        }
-        return id;
-    }
-
-    /**
-     * Validation of numbers in a String
-     * Validation of a 9-digit number
-     * Removing spaces between digits
-     *
-     * @return phone number (String)
-     */
-    public String validateNumberOfPhone() {
-        boolean numberValidation = false;
-        String inputPhoneNumber = "";
-
-        while (!numberValidation) {
-            System.out.println("Enter the phone number (without the area code):");
-            inputPhoneNumber = sc.nextLine().replace(" ", "").trim();
-
-            numberValidation = validateNumbers(inputPhoneNumber);
-
-            if (!numberValidation) {
-                System.out.println("The phone number cannot contain letters or special characters");
-            }
-            if (!(inputPhoneNumber.length() == 9)) {
-                numberValidation = false;
-                System.out.println("Enter a 9-digit number");
-            }
-        }
-        return inputPhoneNumber;
-    }
-
-    /**
      * Method for validating numbers in age
      * Validate the range of age 0-100
      *
      * @return age (int)
      */
-    public int validateAge() {
-        int age = 0;
-        boolean ageValidation = false;
+    public int enterAge() {
+        System.out.println("Enter the age:");
+        while (true) {
+            int age = enterNumber();
 
-        while (!ageValidation) {
-            System.out.println("Enter the age:");
-            String inputAge = sc.nextLine().trim();
-
-            if (validateNumbers(inputAge)) {
-                age = Integer.parseInt(inputAge);
-                ageValidation = true;
-            }
-
-            // Validation of the range 0-100
-            if (!ageValidation) {
-                System.out.println("Age cannot contain letters or special characters");
-            }
-            if (age <= 0) {
-                ageValidation = false;
-                System.out.println("Enter the age as an absolute number");
-            } else if (age > 100) {
-                ageValidation = false;
-                System.out.println("The age is too high");
+            if ((age > 0 && age <= 100)) {
+                return age;
+            } else {
+                System.out.println("The age must be in the range of 1-100");
             }
         }
-        return age;
     }
+
+    private void errorMessage(Error error) {
+        if (error.equals(Error.MENU)) {
+            System.out.println("Enter number from 1 to 7");
+        } else if (error.equals(Error.NUMBER)) {
+            System.out.println("Invalid number");
+        }
+    }
+
+    enum Error {
+        MENU,
+        NUMBER,
+
+    }
+
 }
 
 /**
@@ -371,6 +328,106 @@ public class UserInterface {
  * Method to change the path to the file
  * @param - inputNameOfFile
  * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
+ * <p>
+ * Method to save the file to the original path
+ * For Windows users -> C:\User
+ * For Linux and Apple users -> /home/user/
+ * @param nameOfFile - The input of the user to name the file
+ * <p>
+ * Method to save the file to the new path
+ * For Windows users -> C:\User\...
+ * For Linux and Apple users -> /home/user/...
+ * @param absolutePath - The input of the user to change tha path to the file
+ * <p>
+ * Method to change the path to the file
+ * @param - inputNameOfFile
+ * @return - File with changed path
+ * <p>
+ * Handles the existence of a file if already exists
+ * @param file - represents the file to be checked and potentially modified
  * <p>
  * Handles the existence of a file if already exists
  * @param file - represents the file to be checked and potentially modified
