@@ -273,16 +273,6 @@ public class UserInterface {
         }
     }
 
-    public boolean isValidNumber(String input) {
-        boolean validation = true;
-        for (char c : input.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                validation = false;
-            }
-        }
-        return validation;
-    }
-
     /**
      * Method for validating numbers in age
      * Validate the range of age 0-100
@@ -302,6 +292,25 @@ public class UserInterface {
         }
     }
 
+    /**
+     * @param input - String to be checked if contains numbers
+     * @return - true if only numbers
+     */
+    public boolean isValidNumber(String input) {
+        boolean validation = true;
+        for (char c : input.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                validation = false;
+            }
+        }
+        return validation;
+    }
+
+    /**
+     * Display an error
+     *
+     * @param error - enum of errors according to use
+     */
     private void errorMessage(Error error) {
         if (error.equals(Error.MENU)) {
             System.out.println("Enter number from 1 to 6");
@@ -310,6 +319,9 @@ public class UserInterface {
         }
     }
 
+    /**
+     * Enum of errors
+     */
     enum Error {
         MENU,
         NUMBER,
