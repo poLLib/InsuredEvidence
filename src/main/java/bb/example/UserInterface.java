@@ -72,7 +72,7 @@ public class UserInterface {
                     System.out.printf(endProgram());
                     isEndProgram = true;
                 }
-                default -> errorMessage(Error.MENU);
+                default -> errorMessage("Enter number from 1 to 7");
             }
         }
     }
@@ -247,7 +247,7 @@ public class UserInterface {
                 number = Integer.parseInt(inputNumber);
                 return number;
             } else {
-                errorMessage(Error.NUMBER);
+                errorMessage("Invalid number");
             }
         }
     }
@@ -307,24 +307,11 @@ public class UserInterface {
     }
 
     /**
-     * Display an error
+     * Display the message for error
      *
-     * @param error - enum of errors according to use
+     * @param error
      */
-    private void errorMessage(Error error) {
-        if (error.equals(Error.MENU)) {
-            System.out.println("Enter number from 1 to 6");
-        } else if (error.equals(Error.NUMBER)) {
-            System.out.println("Invalid number");
-        }
-    }
-
-    /**
-     * Enum of errors
-     */
-    enum Error {
-        MENU,
-        NUMBER,
-
+    private void errorMessage(String error) {
+        System.out.println(error);
     }
 }
