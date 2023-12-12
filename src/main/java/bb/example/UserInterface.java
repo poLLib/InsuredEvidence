@@ -1,5 +1,12 @@
 package bb.example;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -13,6 +20,7 @@ import java.util.Scanner;
  * - Searching and listing a specific insured person --> viewInsured()
  * - Modifying insured person's data --> modifyInsured()
  * - Deleting an insured person --> deleteInsured()
+ * - Creating a txt file --> createFile()
  * - Ending the program
  * - Validation of ID
  * - Validation of letters and numbers
@@ -46,7 +54,8 @@ public class UserInterface {
                     3 - Search for an insured person
                     4 - Modify an insured person
                     5 - Delete an insured person
-                    6 - End
+                    6 - Create a file
+                    7 - End
                     --------------------------------------
                     Enter the action number:""");
 
@@ -58,7 +67,8 @@ public class UserInterface {
                 case 3 -> displayInsured();
                 case 4 -> modifyInsured();
                 case 5 -> deleteInsured();
-                case 6 -> {
+                case 6 -> createFile();
+                case 7 -> {
                     System.out.printf(endProgram());
                     isEndProgram = true;
                 }
@@ -154,6 +164,25 @@ public class UserInterface {
             System.out.println("The insured individual has been deleted");
         } else {
             System.out.println("Person with the given ID not found");
+        }
+    }
+
+    /**
+     * Creating a txt file of insured persons
+     */
+    public void createFile() {
+        System.out.println("Enter a name of the file");
+        String fileName = sc.nextLine().trim() + ".txt";
+        System.out.println("Enter a path of the folder where you would like to save the file");
+        String userPath = sc.nextLine().trim();
+
+        try {
+            Path filePath = Paths.get(userPath + fileName).toAbsolutePath();
+            List<String> listOfPersons = Collections.singletonList(database.listOfAllPersons().toString());
+            Files.write(filePath, listOfPersons, StandardOpenOption.CREATE);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
