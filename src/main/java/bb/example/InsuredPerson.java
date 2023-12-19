@@ -1,7 +1,7 @@
 package bb.example;
 
 /**
- * This class represents a specific insured person.
+ * Represents a specific insured person.
  *
  * @author pollib
  */

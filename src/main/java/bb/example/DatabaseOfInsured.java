@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class serves as a database for searching and storing insured individuals in an ArrayList.
+ * A database for searching and storing insured individuals in an ArrayList.
  *
  * @author pollib
  */
@@ -19,12 +19,12 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method adds a new insured individual to the database
+     * Adding a new insured individual into the database.
      *
-     * @param name    - name of the insured individual
-     * @param surname - last name of the insured individual
-     * @param phone   - phone number of the insured individual
-     * @param age     - age of the insured individual
+     * @param name of the insured individual
+     * @param surname of the insured individual
+     * @param phone of the insured individual
+     * @param age of the insured individual
      */
     public void addPerson(String name, String surname, String phone, int age) {
         InsuredPerson newPerson = new InsuredPerson(name, surname, phone, age);
@@ -34,18 +34,18 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method returns all insured individuals in the database
+     * Gives a List of all insured individuals in the database.
      *
-     * @return - List of insured persons
+     * @return List of insured persons
      */
     public List<InsuredPerson> listOfAllPersons() {
         return new ArrayList<>(insuredPersons);
     }
 
     /**
-     * Method finds specific insured individual
+     * Looks up the insured individual by the name or part of it.
      *
-     * @param inputName - specify which name or part of name the method should ask for
+     * @param inputName a name or part of name to be asked for
      */
     public List<InsuredPerson> findSpecificPerson(String inputName) {
         ArrayList<InsuredPerson> foundPerson = new ArrayList<>();
@@ -60,12 +60,12 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method for modifying the details of a specific insured individual
+     * Modifies the details of a specific insured individual.
      *
-     * @param id         - enter the ID of the person to modify
-     * @param newName    - new name
-     * @param newSurname - new last name
-     * @param newPhone   - new phone number
+     * @param id the ID of the person to be modified
+     * @param newName the new name of the modifying person
+     * @param newSurname the new surname of the modifying person
+     * @param newPhone the new phone number of the modifying person
      */
     public void editPerson(int id, String newName, String newSurname, String newPhone) {
         InsuredPerson person = findById(id);
@@ -75,9 +75,9 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method for deleting a specific insured individual by ID
+     * Deletes the insured individual by ID.
      *
-     * @param inputId - enter the exact ID of the person
+     * @param inputId the ID of the person to be deleted
      */
     public boolean deletePerson(int inputId) {
         // Loop for searching for a match in the user's input ID's stored in the database
@@ -91,10 +91,10 @@ public class DatabaseOfInsured {
     }
 
     /**
-     * Method for searching a person by ID
+     * Looks up a person by ID.
      *
-     * @param id - enter the ID of recorded person
-     * @return - InsuredPerson
+     * @param id the ID of recorded person to be found
+     * @return the person with given ID or (returns null if not found)
      */
     public InsuredPerson findById(int id) {
         // Loop for searching for a match in the user's input with ID's stored in the database

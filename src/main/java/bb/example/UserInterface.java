@@ -9,22 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * This class is used for interaction between user input and the program (you can think of it as the front-end).
- * <p>
- * Here you will find the following methods:
- * - Display the main menu --> displayMenu()
- * - Menu selection --> menuSelectionLoop()
- * - Adding an insured person --> addInsured()
- * - Listing insured individuals --> listAllInsured()
- * - Searching and listing a specific insured person --> viewInsured()
- * - Modifying insured person's data --> modifyInsured()
- * - Deleting an insured person --> deleteInsured()
- * - Creating a txt file --> createFile()
- * - Ending the program
- * - Validation of ID
- * - Validation of letters and numbers
- * - Validation of age
- * - Validation of phone number
+ * Interacting between the user input and the program (you can think of it as the front-end).
  *
  * @author pollib
  */
@@ -35,9 +20,6 @@ public class UserInterface {
     // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
-        database.addPerson("tom", "bil", "123456789", 45);
-        database.addPerson("kul", "bil", "123456789", 45);
-        database.addPerson("dom", "uil", "123456789", 45);
     }
 
     /**
@@ -77,10 +59,6 @@ public class UserInterface {
             }
         }
     }
-
-    /**
-     * User input to add a new insured person to the database
-     */
     private void addInsured() {
         // Validation methods returning a string for name and surname
         String name = enterLetters("name");
@@ -96,9 +74,6 @@ public class UserInterface {
         System.out.println("A new insured person has been added.");
     }
 
-    /**
-     * The user requests to display all insured persons
-     */
     private void displayAllInsured() {
         // Output if the database is empty
         List<InsuredPerson> foundPersons = database.listOfAllPersons();
@@ -108,9 +83,6 @@ public class UserInterface {
         printPersonsOfList(foundPersons); // Display from the database
     }
 
-    /**
-     * The user requests to display specific insured persons by name, surname, or their parts
-     */
     private void displayInsured() {
 
         System.out.println("Enter the name or surname:");
@@ -131,9 +103,6 @@ public class UserInterface {
         }
     }
 
-    /**
-     * The method requests data for modifying an insured person, which is subsequently processed by the database
-     */
     private void modifyInsured() {
         System.out.println("Enter the ID of the person you are looking for:");
         int inputId = enterNumber();
@@ -151,10 +120,6 @@ public class UserInterface {
         }
     }
 
-
-    /**
-     * Deletion of an insured person by entering the ID
-     */
     private void deleteInsured() {
         System.out.println("Enter the ID of the person you would like to delete");
         int inputId = enterNumber();
@@ -166,9 +131,6 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Creating a txt file of insured persons
-     */
     private void createFile() {
         System.out.println("Enter a name of the file");
         String fileName = sc.nextLine().trim() + ".txt";
@@ -191,12 +153,6 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Method for validating letters using the isAlphabetic() method on the Character class
-     *
-     * @param inputName - Specify whether you want to ask for a name or surname
-     * @return - name or surname
-     */
     private String enterLetters(String inputName) {
         while (true) {
             System.out.printf("Enter the %s:\n", inputName);
@@ -208,10 +164,6 @@ public class UserInterface {
         }
     }
 
-    /**
-     * @param input - String to be validated for letters
-     * @return true for invalid characters
-     */
     private boolean containsInvalidCharacters(String input) {
         for (char letter : input.toLowerCase().toCharArray()) {
             if (!(Character.isAlphabetic(letter) || letter == ' ' || letter == '-')) {
@@ -221,11 +173,6 @@ public class UserInterface {
         return false;
     }
 
-    /**
-     * Method validate number of user's input
-     *
-     * @return - number (int)
-     */
     private int enterNumber() {
         while (true) {
             int number = 0;
@@ -240,12 +187,6 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Validation of numbers in a String
-     * Validation of a 9-digit number
-     *
-     * @return phone number (String)
-     */
     private String enterNumberOfPhone() {
         while (true) {
             System.out.println("Enter the phone number (9 digits without the area code):");
@@ -261,12 +202,6 @@ public class UserInterface {
         }
     }
 
-    /**
-     * Method for validating numbers in age
-     * Validate the range of age 0-100
-     *
-     * @return age (int)
-     */
     private int enterAge() {
         System.out.println("Enter the age:");
         while (true) {
@@ -279,11 +214,6 @@ public class UserInterface {
             }
         }
     }
-
-    /**
-     * @param input - String to be checked if contains numbers
-     * @return - true if only numbers
-     */
     private boolean isValidNumber(String input) {
         boolean validation = true;
         for (char c : input.toCharArray()) {
