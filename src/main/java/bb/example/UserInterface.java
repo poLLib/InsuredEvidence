@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,14 +35,16 @@ public class UserInterface {
     // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
+        database.addPerson("tom", "bil", "123456789", 45);
+        database.addPerson("kul", "bil", "123456789", 45);
+        database.addPerson("dom", "uil", "123456789", 45);
     }
 
     /**
      * Menu selection
      */
     public void menuSelectionLoop() {
-        boolean isEndProgram = false;
-        while (!isEndProgram) {
+        while (true) {
             System.out.println("""
 
                     --------Insured Records----------
@@ -69,10 +70,10 @@ public class UserInterface {
                 case 5 -> deleteInsured();
                 case 6 -> createFile();
                 case 7 -> {
-                    System.out.printf(endProgram());
-                    isEndProgram = true;
+                    System.out.print("Goodbye");
+                    return;
                 }
-                default -> errorMessage("Enter number from 1 to 7");
+                default -> System.out.println("Enter number from 1 to 7");
             }
         }
     }
@@ -80,7 +81,7 @@ public class UserInterface {
     /**
      * User input to add a new insured person to the database
      */
-    public void addInsured() {
+    private void addInsured() {
         // Validation methods returning a string for name and surname
         String name = enterLetters("name");
         String surname = enterLetters("surname");
@@ -98,65 +99,63 @@ public class UserInterface {
     /**
      * The user requests to display all insured persons
      */
-    public void displayAllInsured() {
+    private void displayAllInsured() {
         // Output if the database is empty
-        if (database.listOfAllPersons().isEmpty()) {
-            System.out.println("\nNo insured individuals are recorded in the database");
+        List<InsuredPerson> foundPersons = database.listOfAllPersons();
+        if (foundPersons.isEmpty()) {
+            System.out.println("No insured individuals are recorded in the database");
         }
-        System.out.println("\n" + database.listOfAllPersons()); // Display from the database
-
+        printPersonsOfList(foundPersons); // Display from the database
     }
 
     /**
      * The user requests to display specific insured persons by name, surname, or their parts
      */
-    public void displayInsured() {
+    private void displayInsured() {
 
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        System.out.println(database.findSpecificPerson(inputNameSurname));
+        List<InsuredPerson> foundPersons = database.findSpecificPerson(inputNameSurname);
+        printPersonsOfList(foundPersons);
 
         // Output if the database is empty or the searched insured individual is not recorded
-        if (database.findSpecificPerson(inputNameSurname).isEmpty()) {
+        if (foundPersons.isEmpty()) {
             System.out.println("This name is not recorded in the database");
         }
+    }
 
-        database.findSpecificPerson(inputNameSurname); // Display from the database
-
+    private void printPersonsOfList(List<InsuredPerson> persons) {
+        for (InsuredPerson person : persons) {
+            System.out.println(person);
+        }
     }
 
     /**
      * The method requests data for modifying an insured person, which is subsequently processed by the database
      */
-    public void modifyInsured() {
-        while (true) {
-            System.out.println("Enter the ID of the person you are looking for:");
-            int inputId = enterNumber();
-            boolean isValid = false;
+    private void modifyInsured() {
+        System.out.println("Enter the ID of the person you are looking for:");
+        int inputId = enterNumber();
 
-            if (inputId >= 0) {
-                if (database.findById(inputId) == null) {
-                    System.out.println("The database does not contain the ID you entered");
-                } else {
-                    String newName = enterLetters("new name");
-                    String newSurname = enterLetters("new surname");
-                    String newTel = enterNumberOfPhone();
+        if (database.findById(inputId) == null) {
+            System.out.println("The database does not contain the ID you entered");
+        } else {
+            System.out.println(database.findById(inputId));
+            String newName = enterLetters("new name");
+            String newSurname = enterLetters("new surname");
+            String newTel = enterNumberOfPhone();
 
-                    database.editPerson(inputId, newName, newSurname, newTel);
-                    System.out.println("The insured person has been modified.");
-                }
-                break; // exit the loop if the ID is valid
-            } else {
-                System.out.println("The number of ID cannot contain letters or special characters, it must be as an absolute number");
-            }
+            database.editPerson(inputId, newName, newSurname, newTel);
+            System.out.println("The person has been modified to:\n" + database.findById(inputId));
         }
     }
+
 
     /**
      * Deletion of an insured person by entering the ID
      */
-    public void deleteInsured() {
+    private void deleteInsured() {
         System.out.println("Enter the ID of the person you would like to delete");
         int inputId = enterNumber();
 
@@ -170,51 +169,43 @@ public class UserInterface {
     /**
      * Creating a txt file of insured persons
      */
-    public void createFile() {
+    private void createFile() {
         System.out.println("Enter a name of the file");
         String fileName = sc.nextLine().trim() + ".txt";
         System.out.println("Enter a path of the folder where you would like to save the file");
         String userPath = sc.nextLine().trim();
 
         try {
-            Path filePath = Paths.get(userPath + fileName).toAbsolutePath();
-            List<String> listOfPersons = Collections.singletonList(database.listOfAllPersons().toString());
-            Files.write(filePath, listOfPersons, StandardOpenOption.CREATE);
-
+            Path filePath = Paths.get(userPath, fileName);
+            List<InsuredPerson> persons = database.listOfAllPersons();
+            if (Files.exists(filePath)) {
+                Files.delete(filePath);
+            }
+            for (InsuredPerson person : persons) {
+                String personDetails = String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge());
+                Files.writeString(filePath, personDetails, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            }
+            System.out.println("The file was created");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("An error occurred while creating the file: " + e.getMessage());
         }
-    }
-
-    /**
-     * Ending the program
-     *
-     * @return - farewell
-     */
-    public String endProgram() {
-        return "Goodbye";
     }
 
     /**
      * Method for validating letters using the isAlphabetic() method on the Character class
      *
-     * @param name - Specify whether you want to ask for a name or surname
+     * @param inputName - Specify whether you want to ask for a name or surname
      * @return - name or surname
      */
-    public String enterLetters(String name) {
-        String returnName;
-
-        do {
-            System.out.printf("Enter the %s:\n", name);
-            returnName = sc.nextLine().trim();
-
-            if (containsInvalidCharacters(returnName)) {
-                System.out.println("You must enter only letters of the alphabet");
+    private String enterLetters(String inputName) {
+        while (true) {
+            System.out.printf("Enter the %s:\n", inputName);
+            String name = sc.nextLine().trim();
+            if (!containsInvalidCharacters(name)) {
+                return name;
             }
-
-        } while (containsInvalidCharacters(returnName));
-
-        return returnName;
+            System.out.println("You must enter only letters of the alphabet");
+        }
     }
 
     /**
@@ -230,24 +221,21 @@ public class UserInterface {
         return false;
     }
 
-
     /**
      * Method validate number of user's input
      *
      * @return - number (int)
      */
-    public int enterNumber() {
+    private int enterNumber() {
         while (true) {
-            System.out.println("Enter a number");
             int number = 0;
             String inputNumber = sc.nextLine().trim();
-            boolean isValid = true;
 
             if (isValidNumber(inputNumber)) {
                 number = Integer.parseInt(inputNumber);
                 return number;
             } else {
-                errorMessage("Invalid number");
+                System.out.println("Invalid number");
             }
         }
     }
@@ -258,7 +246,7 @@ public class UserInterface {
      *
      * @return phone number (String)
      */
-    public String enterNumberOfPhone() {
+    private String enterNumberOfPhone() {
         while (true) {
             System.out.println("Enter the phone number (9 digits without the area code):");
             String inputPhoneNumber = sc.nextLine().trim();
@@ -279,7 +267,7 @@ public class UserInterface {
      *
      * @return age (int)
      */
-    public int enterAge() {
+    private int enterAge() {
         System.out.println("Enter the age:");
         while (true) {
             int age = enterNumber();
@@ -296,7 +284,7 @@ public class UserInterface {
      * @param input - String to be checked if contains numbers
      * @return - true if only numbers
      */
-    public boolean isValidNumber(String input) {
+    private boolean isValidNumber(String input) {
         boolean validation = true;
         for (char c : input.toCharArray()) {
             if (!Character.isDigit(c)) {
@@ -304,14 +292,5 @@ public class UserInterface {
             }
         }
         return validation;
-    }
-
-    /**
-     * Display the message for error
-     *
-     * @param error
-     */
-    private void errorMessage(String error) {
-        System.out.println(error);
     }
 }

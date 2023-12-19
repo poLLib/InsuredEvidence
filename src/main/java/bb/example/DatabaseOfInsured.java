@@ -97,14 +97,12 @@ public class DatabaseOfInsured {
      * @return - InsuredPerson
      */
     public InsuredPerson findById(int id) {
-        InsuredPerson insuredPerson = null;
         // Loop for searching for a match in the user's input with ID's stored in the database
         for (InsuredPerson person : insuredPersons) {
             if (person.getId() == id) {
-                insuredPerson = person;
-                System.out.println(person);
+                return person;
             }
         }
-        return insuredPerson;
+        return null;
     }
 }
