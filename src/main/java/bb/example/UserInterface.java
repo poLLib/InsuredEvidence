@@ -1,5 +1,10 @@
 package bb.example;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.LinkedHashMap;
 import java.util.Scanner;
 
@@ -63,9 +68,9 @@ public class UserInterface {
                 case 1 -> addInsured();
                 case 2 -> displayAllInsured();
                 case 3 -> displayInsured();
-/*                case 4 -> modifyInsured();
+                case 4 -> modifyInsured();
                 case 5 -> deleteInsured();
-                case 6 -> createFile();*/
+                case 6 -> createFile();
                 case 7 -> {
                     System.out.print("Goodbye");
                     return;
@@ -118,7 +123,7 @@ public class UserInterface {
         }
     }
 
-/*    private void modifyInsured() {
+    private void modifyInsured() {
         System.out.println("Enter the ID of the person you are looking for:");
         int inputId = enterNumber();
 
@@ -133,9 +138,9 @@ public class UserInterface {
             database.editPerson(inputId, newName, newSurname, newTel);
             System.out.println("The person has been modified to:\n" + database.findById(inputId));
         }
-    }*/
+    }
 
-/*    private void deleteInsured() {
+    private void deleteInsured() {
         System.out.println("Enter the ID of the person you would like to delete");
         int inputId = enterNumber();
 
@@ -144,9 +149,9 @@ public class UserInterface {
         } else {
             System.out.println("Person with the given ID not found");
         }
-    }*/
+    }
 
-    /*private void createFile() {
+    private void createFile() {
         System.out.println("Enter a name of the file");
         String fileName = sc.nextLine().trim() + ".txt";
         System.out.println("Enter a path of the folder where you would like to save the file");
@@ -154,11 +159,11 @@ public class UserInterface {
 
         try {
             Path filePath = Paths.get(userPath, fileName);
-            List<InsuredPerson> persons = database.listOfAllPersons();
+            LinkedHashMap<Integer, InsuredPerson> persons = database.listOfAllPersons();
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
             }
-            for (InsuredPerson person : persons) {
+            for (InsuredPerson person : persons.values()) {
                 String personDetails = String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge());
                 Files.writeString(filePath, personDetails, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
             }
@@ -166,7 +171,7 @@ public class UserInterface {
         } catch (IOException e) {
             System.err.println("An error occurred while creating the file: " + e.getMessage());
         }
-    }*/
+    }
 
     private String enterLetters(String inputName) {
         while (true) {

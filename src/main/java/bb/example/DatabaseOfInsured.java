@@ -3,7 +3,7 @@ package bb.example;
 import java.util.LinkedHashMap;
 
 /**
- * A database for searching and storing insured individuals in an ArrayList.
+ * A database for searching and storing insured individuals in an LinkedHashMap.
  *
  * @author pollib
  */
@@ -28,14 +28,14 @@ public class DatabaseOfInsured {
     public void addPerson(String name, String surname, String phone, int age) {
         InsuredPerson newPerson = new InsuredPerson(name, surname, phone, age);
         newPerson.setId(nextId);
-        nextId++;
         insuredPersons.put(nextId, newPerson);
+        nextId++;
     }
 
     /**
-     * Gives a List of all insured individuals in the database.
+     * Gives a LinkedHashMap of all insured individuals in the database.
      *
-     * @return List of insured persons
+     * @return LinkedHashMap of insured persons
      */
     public LinkedHashMap<Integer, InsuredPerson> listOfAllPersons() {
         return new LinkedHashMap<>(insuredPersons);
@@ -45,6 +45,7 @@ public class DatabaseOfInsured {
      * Looks up the insured individual by the name or part of it.
      *
      * @param inputName a name or part of name to be asked for
+     * @return LinkedHashMap of searched persons
      */
     public LinkedHashMap<Integer, InsuredPerson> findSpecificPerson(String inputName) {
         LinkedHashMap<Integer, InsuredPerson> foundPersons = new LinkedHashMap<>();
@@ -65,28 +66,29 @@ public class DatabaseOfInsured {
      * @param newSurname the new surname of the modifying person
      * @param newPhone the new phone number of the modifying person
      */
-/*    public void editPerson(int id, String newName, String newSurname, String newPhone) {
+    public void editPerson(int id, String newName, String newSurname, String newPhone) {
         InsuredPerson person = findById(id);
         person.setName(newName);
         person.setSurname(newSurname);
         person.setPhone(newPhone);
-    }*/
+    }
 
     /**
      * Deletes the insured individual by ID.
      *
      * @param inputId the ID of the person to be deleted
+     * @return true if the person was deleted
      */
-/*    public boolean deletePerson(int inputId) {
+    public boolean deletePerson(int inputId) {
         // Loop for searching for a match in the user's input ID's stored in the database
-        for (InsuredPerson insuredPerson : insuredPersons) {
-            if (inputId == insuredPerson.getId()) {
-                insuredPersons.remove(insuredPerson);
+        for (Integer idPerson : insuredPersons.keySet()) {
+            if (idPerson == inputId) {
+                insuredPersons.remove(idPerson);
                 return true; // Deleting successful
             }
         }
         return false; // Person was not found
-    }*/
+    }
 
     /**
      * Looks up a person by ID.
@@ -94,13 +96,13 @@ public class DatabaseOfInsured {
      * @param id the ID of recorded person to be found
      * @return the person with given ID or (returns null if not found)
      */
-/*    public InsuredPerson findById(int id) {
+    public InsuredPerson findById(int id) {
         // Loop for searching for a match in the user's input with ID's stored in the database
-        for (InsuredPerson person : insuredPersons) {
+        for (InsuredPerson person : insuredPersons.values()) {
             if (person.getId() == id) {
                 return person;
             }
         }
         return null;
-    }*/
+    }
 }
