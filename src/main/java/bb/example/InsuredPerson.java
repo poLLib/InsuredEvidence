@@ -63,7 +63,7 @@ public class InsuredPerson {
 
     @Override
     public String toString() {
-        return "Insured person: ID " + id + " - " + name + " " + surname + ", phone: " + phone + ", age: " + age;
+        return "Insured person: " + name + " " + surname + ", phone: " + phone + ", age: " + age + ", ID-" + id;
     }
 }
 

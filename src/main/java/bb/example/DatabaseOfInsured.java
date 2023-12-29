@@ -1,7 +1,6 @@
 package bb.example;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 /**
  * A database for searching and storing insured individuals in an ArrayList.
@@ -10,12 +9,12 @@ import java.util.List;
  */
 
 public class DatabaseOfInsured {
-    private final ArrayList<InsuredPerson> insuredPersons;
+    private final LinkedHashMap<Integer, InsuredPerson> insuredPersons;
     private int nextId = 1;
 
     // Creating an instance of an ArrayList representing the database
     public DatabaseOfInsured() {
-        insuredPersons = new ArrayList<>();
+        insuredPersons = new LinkedHashMap<>();
     }
 
     /**
@@ -30,7 +29,7 @@ public class DatabaseOfInsured {
         InsuredPerson newPerson = new InsuredPerson(name, surname, phone, age);
         newPerson.setId(nextId);
         nextId++;
-        insuredPersons.add(newPerson);
+        insuredPersons.put(nextId, newPerson);
     }
 
     /**
@@ -38,8 +37,8 @@ public class DatabaseOfInsured {
      *
      * @return List of insured persons
      */
-    public List<InsuredPerson> listOfAllPersons() {
-        return new ArrayList<>(insuredPersons);
+    public LinkedHashMap<Integer, InsuredPerson> listOfAllPersons() {
+        return new LinkedHashMap<>(insuredPersons);
     }
 
     /**
@@ -47,16 +46,15 @@ public class DatabaseOfInsured {
      *
      * @param inputName a name or part of name to be asked for
      */
-    public List<InsuredPerson> findSpecificPerson(String inputName) {
-        ArrayList<InsuredPerson> foundPerson = new ArrayList<>();
-
+    public LinkedHashMap<Integer, InsuredPerson> findSpecificPerson(String inputName) {
+        LinkedHashMap<Integer, InsuredPerson> foundPersons = new LinkedHashMap<>();
         // Loop for searching for a match in the user's input with names and last names stored in the database
-        for (InsuredPerson insuredPerson : insuredPersons) {
-            if (insuredPerson.getName().contains(inputName) || insuredPerson.getSurname().contains(inputName)) {
-                foundPerson.add(insuredPerson);
+        for (InsuredPerson person : insuredPersons.values()) {
+            if ((person.getName().contains(inputName)) || (person.getSurname().contains(inputName))) {
+                foundPersons.put(person.getId(), person);
             }
         }
-        return foundPerson;
+        return foundPersons;
     }
 
     /**
@@ -67,19 +65,19 @@ public class DatabaseOfInsured {
      * @param newSurname the new surname of the modifying person
      * @param newPhone the new phone number of the modifying person
      */
-    public void editPerson(int id, String newName, String newSurname, String newPhone) {
+/*    public void editPerson(int id, String newName, String newSurname, String newPhone) {
         InsuredPerson person = findById(id);
         person.setName(newName);
         person.setSurname(newSurname);
         person.setPhone(newPhone);
-    }
+    }*/
 
     /**
      * Deletes the insured individual by ID.
      *
      * @param inputId the ID of the person to be deleted
      */
-    public boolean deletePerson(int inputId) {
+/*    public boolean deletePerson(int inputId) {
         // Loop for searching for a match in the user's input ID's stored in the database
         for (InsuredPerson insuredPerson : insuredPersons) {
             if (inputId == insuredPerson.getId()) {
@@ -88,7 +86,7 @@ public class DatabaseOfInsured {
             }
         }
         return false; // Person was not found
-    }
+    }*/
 
     /**
      * Looks up a person by ID.
@@ -96,7 +94,7 @@ public class DatabaseOfInsured {
      * @param id the ID of recorded person to be found
      * @return the person with given ID or (returns null if not found)
      */
-    public InsuredPerson findById(int id) {
+/*    public InsuredPerson findById(int id) {
         // Loop for searching for a match in the user's input with ID's stored in the database
         for (InsuredPerson person : insuredPersons) {
             if (person.getId() == id) {
@@ -104,5 +102,5 @@ public class DatabaseOfInsured {
             }
         }
         return null;
-    }
+    }*/
 }

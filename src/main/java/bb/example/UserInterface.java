@@ -1,11 +1,6 @@
 package bb.example;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Scanner;
 
 /**
@@ -20,6 +15,26 @@ public class UserInterface {
     // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
+        database.addPerson("tom", "bill", "756654459", 45);
+        database.addPerson("bul", "bill", "756654459", 45);
+        database.addPerson("sdf", "bill", "756654459", 45);
+        database.addPerson("tok", "bill", "756654459", 45);
+        database.addPerson("tom", "bill", "756654459", 45);
+        database.addPerson("bul", "bill", "756654459", 45);
+        database.addPerson("sdf", "bill", "756654459", 45);
+        database.addPerson("tok", "bill", "756654459", 45);
+        database.addPerson("tom", "bill", "756654459", 45);
+        database.addPerson("bul", "bill", "756654459", 45);
+        database.addPerson("sdf", "bill", "756654459", 45);
+        database.addPerson("tok", "bill", "756654459", 45);
+        database.addPerson("tom", "bill", "756654459", 45);
+        database.addPerson("bul", "bill", "756654459", 45);
+        database.addPerson("sdf", "bill", "756654459", 45);
+        database.addPerson("tok", "bill", "756654459", 45);
+        database.addPerson("tom", "bill", "756654459", 45);
+        database.addPerson("bul", "bill", "756654459", 45);
+        database.addPerson("sdf", "bill", "756654459", 45);
+        database.addPerson("tok", "bill", "756654459", 45);
     }
 
     /**
@@ -48,9 +63,9 @@ public class UserInterface {
                 case 1 -> addInsured();
                 case 2 -> displayAllInsured();
                 case 3 -> displayInsured();
-                case 4 -> modifyInsured();
+/*                case 4 -> modifyInsured();
                 case 5 -> deleteInsured();
-                case 6 -> createFile();
+                case 6 -> createFile();*/
                 case 7 -> {
                     System.out.print("Goodbye");
                     return;
@@ -76,7 +91,7 @@ public class UserInterface {
 
     private void displayAllInsured() {
         // Output if the database is empty
-        List<InsuredPerson> foundPersons = database.listOfAllPersons();
+        LinkedHashMap<Integer, InsuredPerson> foundPersons = database.listOfAllPersons();
         if (foundPersons.isEmpty()) {
             System.out.println("No insured individuals are recorded in the database");
         }
@@ -88,7 +103,7 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        List<InsuredPerson> foundPersons = database.findSpecificPerson(inputNameSurname);
+        LinkedHashMap<Integer, InsuredPerson> foundPersons = database.findSpecificPerson(inputNameSurname);
         printPersonsOfList(foundPersons);
 
         // Output if the database is empty or the searched insured individual is not recorded
@@ -97,13 +112,13 @@ public class UserInterface {
         }
     }
 
-    private void printPersonsOfList(List<InsuredPerson> persons) {
-        for (InsuredPerson person : persons) {
-            System.out.println(person);
+    private void printPersonsOfList(LinkedHashMap<Integer, InsuredPerson> persons) {
+        for (Integer id : persons.keySet()) {
+            System.out.println(persons.get(id));
         }
     }
 
-    private void modifyInsured() {
+/*    private void modifyInsured() {
         System.out.println("Enter the ID of the person you are looking for:");
         int inputId = enterNumber();
 
@@ -118,9 +133,9 @@ public class UserInterface {
             database.editPerson(inputId, newName, newSurname, newTel);
             System.out.println("The person has been modified to:\n" + database.findById(inputId));
         }
-    }
+    }*/
 
-    private void deleteInsured() {
+/*    private void deleteInsured() {
         System.out.println("Enter the ID of the person you would like to delete");
         int inputId = enterNumber();
 
@@ -129,9 +144,9 @@ public class UserInterface {
         } else {
             System.out.println("Person with the given ID not found");
         }
-    }
+    }*/
 
-    private void createFile() {
+    /*private void createFile() {
         System.out.println("Enter a name of the file");
         String fileName = sc.nextLine().trim() + ".txt";
         System.out.println("Enter a path of the folder where you would like to save the file");
@@ -151,7 +166,7 @@ public class UserInterface {
         } catch (IOException e) {
             System.err.println("An error occurred while creating the file: " + e.getMessage());
         }
-    }
+    }*/
 
     private String enterLetters(String inputName) {
         while (true) {
