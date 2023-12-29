@@ -195,7 +195,7 @@ public class UserInterface {
 
     private int enterNumber() {
         while (true) {
-            int number = 0;
+            int number;
             String inputNumber = sc.nextLine().trim();
 
             if (isValidNumber(inputNumber)) {
