@@ -20,26 +20,6 @@ public class UserInterface {
     // Creating an instance of the database
     public UserInterface() {
         database = new DatabaseOfInsured();
-        database.addPerson("tom", "bill", "756654459", 45);
-        database.addPerson("bul", "bill", "756654459", 45);
-        database.addPerson("sdf", "bill", "756654459", 45);
-        database.addPerson("tok", "bill", "756654459", 45);
-        database.addPerson("tom", "bill", "756654459", 45);
-        database.addPerson("bul", "bill", "756654459", 45);
-        database.addPerson("sdf", "bill", "756654459", 45);
-        database.addPerson("tok", "bill", "756654459", 45);
-        database.addPerson("tom", "bill", "756654459", 45);
-        database.addPerson("bul", "bill", "756654459", 45);
-        database.addPerson("sdf", "bill", "756654459", 45);
-        database.addPerson("tok", "bill", "756654459", 45);
-        database.addPerson("tom", "bill", "756654459", 45);
-        database.addPerson("bul", "bill", "756654459", 45);
-        database.addPerson("sdf", "bill", "756654459", 45);
-        database.addPerson("tok", "bill", "756654459", 45);
-        database.addPerson("tom", "bill", "756654459", 45);
-        database.addPerson("bul", "bill", "756654459", 45);
-        database.addPerson("sdf", "bill", "756654459", 45);
-        database.addPerson("tok", "bill", "756654459", 45);
     }
 
     /**
