@@ -177,7 +177,7 @@ public class UserInterface {
         while (true) {
             System.out.printf("Enter the %s:\n", inputName);
             String name = sc.nextLine().trim();
-            if (!containsInvalidCharacters(name)) {
+            if (!containsInvalidCharacters(name) && !name.isEmpty()) {
                 return name;
             }
             System.out.println("You must enter only letters of the alphabet");
@@ -198,7 +198,7 @@ public class UserInterface {
             int number;
             String inputNumber = sc.nextLine().trim();
 
-            if (isValidNumber(inputNumber)) {
+            if (isValidNumber(inputNumber) && !inputNumber.isEmpty()) {
                 number = Integer.parseInt(inputNumber);
                 return number;
             } else {
@@ -212,7 +212,7 @@ public class UserInterface {
             System.out.println("Enter the phone number (9 digits without the area code):");
             String inputPhoneNumber = sc.nextLine().trim();
 
-            if (!isValidNumber(inputPhoneNumber)) {
+            if (!isValidNumber(inputPhoneNumber) && !inputPhoneNumber.isEmpty()) {
                 System.out.println("The phone number cannot contain letters or special characters and must be 9-digit number");
             } else if (inputPhoneNumber.length() != 9) {
                 System.out.println("Enter a 9-digit number");
