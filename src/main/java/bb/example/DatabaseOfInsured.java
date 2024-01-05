@@ -1,5 +1,7 @@
 package bb.example;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 
 /**
@@ -37,8 +39,8 @@ public class DatabaseOfInsured {
      *
      * @return LinkedHashMap of insured persons
      */
-    public LinkedHashMap<Integer, InsuredPerson> listOfAllPersons() {
-        return new LinkedHashMap<>(insuredPersons);
+    public Collection<InsuredPerson> listOfAllPersons() {
+        return Collections.unmodifiableCollection(insuredPersons.values());
     }
 
     /**
@@ -47,15 +49,10 @@ public class DatabaseOfInsured {
      * @param inputName a name or part of name to be asked for
      * @return LinkedHashMap of searched persons
      */
-    public LinkedHashMap<Integer, InsuredPerson> findSpecificPerson(String inputName) {
-        LinkedHashMap<Integer, InsuredPerson> foundPersons = new LinkedHashMap<>();
-        // Loop for searching for a match in the user's input with names and last names stored in the database
-        for (InsuredPerson person : insuredPersons.values()) {
-            if ((person.getName().contains(inputName)) || (person.getSurname().contains(inputName))) {
-                foundPersons.put(person.getId(), person);
-            }
-        }
-        return foundPersons;
+    public Collection<InsuredPerson> findSpecificPerson(String inputName) {
+        return insuredPersons.values().stream()
+                .filter(person -> person.getName().contains(inputName) || person.getSurname().contains(inputName))
+                .toList();
     }
 
     /**

@@ -1,11 +1,6 @@
 package bb.example;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.Scanner;
 
 /**
@@ -50,7 +45,7 @@ public class UserInterface {
                 case 3 -> displayInsured();
                 case 4 -> modifyInsured();
                 case 5 -> deleteInsured();
-                case 6 -> createFile();
+                /*                case 6 -> createFile();*/
                 case 7 -> {
                     System.out.print("Goodbye");
                     return;
@@ -76,11 +71,11 @@ public class UserInterface {
 
     private void displayAllInsured() {
         // Output if the database is empty
-        LinkedHashMap<Integer, InsuredPerson> foundPersons = database.listOfAllPersons();
-        if (foundPersons.isEmpty()) {
+        Collection<InsuredPerson> persons = database.listOfAllPersons();
+        if (persons.isEmpty()) {
             System.out.println("No insured individuals are recorded in the database");
         }
-        printPersonsOfList(foundPersons); // Display from the database
+        persons.forEach(System.out::println); // Display from the database
     }
 
     private void displayInsured() {
@@ -88,8 +83,8 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        LinkedHashMap<Integer, InsuredPerson> foundPersons = database.findSpecificPerson(inputNameSurname);
-        printPersonsOfList(foundPersons);
+        Collection<InsuredPerson> foundPersons = database.findSpecificPerson(inputNameSurname);
+        foundPersons.forEach(System.out::println);
 
         // Output if the database is empty or the searched insured individual is not recorded
         if (foundPersons.isEmpty()) {
@@ -97,26 +92,21 @@ public class UserInterface {
         }
     }
 
-    private void printPersonsOfList(LinkedHashMap<Integer, InsuredPerson> persons) {
-        for (Integer id : persons.keySet()) {
-            System.out.println(persons.get(id));
-        }
-    }
-
     private void modifyInsured() {
         System.out.println("Enter the ID of the person you are looking for:");
         int inputId = enterNumber();
+        InsuredPerson foundPerson = database.findById(inputId);
 
-        if (database.findById(inputId) == null) {
+        if (foundPerson == null) {
             System.out.println("The database does not contain the ID you entered");
         } else {
-            System.out.println(database.findById(inputId));
+            System.out.println(foundPerson);
             String newName = enterLetters("new name");
             String newSurname = enterLetters("new surname");
             String newTel = enterNumberOfPhone();
 
             database.editPerson(inputId, newName, newSurname, newTel);
-            System.out.println("The person has been modified to:\n" + database.findById(inputId));
+            System.out.println("The person has been modified to:\n" + foundPerson);
         }
     }
 
@@ -131,7 +121,7 @@ public class UserInterface {
         }
     }
 
-    private void createFile() {
+/*    private void createFile() {
         System.out.println("Enter a name of the file");
         String fileName = sc.nextLine().trim() + ".txt";
         System.out.println("Enter a path of the folder where you would like to save the file");
@@ -139,7 +129,7 @@ public class UserInterface {
 
         try {
             Path filePath = Paths.get(userPath, fileName);
-            LinkedHashMap<Integer, InsuredPerson> persons = database.listOfAllPersons();
+            Collection<InsuredPerson> persons = database.listOfAllPersons();
             if (Files.exists(filePath)) {
                 Files.delete(filePath);
             }
@@ -151,7 +141,7 @@ public class UserInterface {
         } catch (IOException e) {
             System.err.println("An error occurred while creating the file: " + e.getMessage());
         }
-    }
+    }*/
 
     private String enterLetters(String inputName) {
         while (true) {
