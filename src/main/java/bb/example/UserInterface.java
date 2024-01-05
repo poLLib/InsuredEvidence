@@ -1,5 +1,11 @@
 package bb.example;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -45,7 +51,7 @@ public class UserInterface {
                 case 3 -> displayInsured();
                 case 4 -> modifyInsured();
                 case 5 -> deleteInsured();
-                /*                case 6 -> createFile();*/
+                case 6 -> createFile();
                 case 7 -> {
                     System.out.print("Goodbye");
                     return;
@@ -54,6 +60,7 @@ public class UserInterface {
             }
         }
     }
+
     private void addInsured() {
         // Validation methods returning a string for name and surname
         String name = enterLetters("name");
@@ -121,27 +128,23 @@ public class UserInterface {
         }
     }
 
-/*    private void createFile() {
+    private void createFile() {
         System.out.println("Enter a name of the file");
         String fileName = sc.nextLine().trim() + ".txt";
         System.out.println("Enter a path of the folder where you would like to save the file");
         String userPath = sc.nextLine().trim();
+        Path filePath = Paths.get(userPath, fileName);
+        Collection<InsuredPerson> persons = database.listOfAllPersons();
 
-        try {
-            Path filePath = Paths.get(userPath, fileName);
-            Collection<InsuredPerson> persons = database.listOfAllPersons();
-            if (Files.exists(filePath)) {
-                Files.delete(filePath);
-            }
-            for (InsuredPerson person : persons.values()) {
-                String personDetails = String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge());
-                Files.writeString(filePath, personDetails, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+        try (BufferedWriter w = Files.newBufferedWriter(filePath, StandardOpenOption.CREATE)) {
+            for (InsuredPerson person : persons) {
+                w.write(String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge()));
             }
             System.out.println("The file was created");
         } catch (IOException e) {
             System.err.println("An error occurred while creating the file: " + e.getMessage());
         }
-    }*/
+    }
 
     private String enterLetters(String inputName) {
         while (true) {
@@ -197,6 +200,7 @@ public class UserInterface {
             }
         }
     }
+
     private boolean isValidNumber(String input) {
         return input.chars().allMatch(Character::isDigit);
     }
