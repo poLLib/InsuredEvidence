@@ -155,22 +155,15 @@ public class UserInterface {
     }
 
     private boolean containsInvalidCharacters(String input) {
-        for (char letter : input.toLowerCase().toCharArray()) {
-            if (!(Character.isAlphabetic(letter) || letter == ' ' || letter == '-')) {
-                return true;
-            }
-        }
-        return false;
+        return !input.chars().allMatch(letter -> Character.isAlphabetic(letter) || letter == ' ' || letter == '-');
     }
 
     private int enterNumber() {
         while (true) {
-            int number;
             String inputNumber = sc.nextLine().trim();
 
             if (isValidNumber(inputNumber) && !inputNumber.isEmpty()) {
-                number = Integer.parseInt(inputNumber);
-                return number;
+                return Integer.parseInt(inputNumber);
             } else {
                 System.out.println("Invalid number");
             }
@@ -205,12 +198,6 @@ public class UserInterface {
         }
     }
     private boolean isValidNumber(String input) {
-        boolean validation = true;
-        for (char c : input.toCharArray()) {
-            if (!Character.isDigit(c)) {
-                validation = false;
-            }
-        }
-        return validation;
+        return input.chars().allMatch(Character::isDigit);
     }
 }
