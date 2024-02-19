@@ -5,7 +5,7 @@ package bb.example;
  */
 public class Main {
     public static void main(String[] args) {
-        UserInterface userInterface = new UserInterface();
+        UserInterface userInterface = new UserInterface(new PersonDatabase());
 
         /* Start of the user session loop
            The user selects a command by entering a number

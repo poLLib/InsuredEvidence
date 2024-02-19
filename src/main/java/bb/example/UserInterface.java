@@ -10,22 +10,18 @@ import java.util.Collection;
 import java.util.Scanner;
 
 /**
- * Interacting between the user input and the program (you can think of it as the front-end).
+ * The class interacts with the user
  *
  * @author pollib
  */
 public class UserInterface {
-    private final Scanner sc = new Scanner(System.in); // Creating an instance for user's input
-    private final DatabaseOfInsured database;
+    private final Scanner sc = new Scanner(System.in);
+    private final PersonDatabase database;
 
-    // Creating an instance of the database
-    public UserInterface() {
-        database = new DatabaseOfInsured();
+    public UserInterface(PersonDatabase database) {
+        this.database = database;
     }
 
-    /**
-     * Menu selection
-     */
     public void menuSelectionLoop() {
         while (true) {
             System.out.println("""
@@ -62,23 +58,97 @@ public class UserInterface {
     }
 
     private void addInsured() {
-        // Validation methods returning a string for name and surname
-        String name = enterLetters("name");
-        String surname = enterLetters("surname");
-
-        // Phone number validation, can only have 9 digits
-        String tel = enterNumberOfPhone();
-
-        // Age validation, the number must be in the range of 0-100
+        String name = enterUserName("name");
+        String surname = enterUserName("surname");
+        String tel = enterPhoneNumber();
         int age = enterAge();
 
         database.addPerson(name, surname, tel, age); // Add the insured person to the database
         System.out.println("A new insured person has been added.");
     }
 
+    private String enterUserName(String name) {
+        while (true) {
+            System.out.printf("Enter the %s:\n", name);
+            String userName = sc.nextLine().trim();
+
+            if (doesContainsChar(userName)) {
+                return userName;
+            } else {
+                System.out.println("You must enter only letters of the alphabet");
+
+            }
+        }
+    }
+
+    private boolean doesContainsChar(String string) {
+        return (!containsInvalidCharacters(string) && !string.isEmpty());
+    }
+
+    private boolean containsInvalidCharacters(String input) {
+        return !input.chars().allMatch(letter -> Character.isAlphabetic(letter) || letter == ' ' || letter == '-');
+    }
+
+    private String enterPhoneNumber() {
+        while (true) {
+            System.out.println("Enter the phone number (9 digits without the area code):");
+            String userPhoneNumber = sc.nextLine().trim();
+
+            if (doesContainNineDigitString(userPhoneNumber)) {
+                return userPhoneNumber;
+            }
+        }
+    }
+
+    private boolean doesContainNineDigitString(String string) {
+        if (!isValidNumber(string) && !string.isEmpty()) {
+            System.out.println("The phone number cannot contain letters or special characters and must be 9-digit number");
+        } else if (string.length() != 9) {
+            System.out.println("Enter a 9-digit number");
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isValidNumber(String input) {
+        return input.chars().allMatch(Character::isDigit);
+    }
+
+    private int enterAge() {
+        System.out.println("Enter the age:");
+        while (true) {
+            int age = enterNumber();
+
+            if (doesContainRangeOfDigits(age)) {
+                return age;
+            }
+        }
+    }
+
+    private int enterNumber() {
+        while (true) {
+            String inputNumber = sc.nextLine().trim();
+
+            if (isValidNumber(inputNumber) && !inputNumber.isEmpty()) {
+                return Integer.parseInt(inputNumber);
+            } else {
+                System.out.println("Invalid number");
+            }
+        }
+    }
+
+    private boolean doesContainRangeOfDigits(int age) {
+        if (!(age > 0 && age <= 100)) {
+            System.out.println("The age must be in the range of 1-100");
+            return false;
+        }
+        return true;
+    }
+
     private void displayAllInsured() {
         // Output if the database is empty
-        Collection<InsuredPerson> persons = database.listOfAllPersons();
+        Collection<PersonI> persons = database.listOfAllPersons();
         if (persons.isEmpty()) {
             System.out.println("No insured individuals are recorded in the database");
         }
@@ -90,7 +160,7 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        Collection<InsuredPerson> foundPersons = database.findSpecificPerson(inputNameSurname);
+        Collection<PersonI> foundPersons = database.findSpecificPerson(inputNameSurname);
         foundPersons.forEach(System.out::println);
 
         // Output if the database is empty or the searched insured individual is not recorded
@@ -102,15 +172,15 @@ public class UserInterface {
     private void modifyInsured() {
         System.out.println("Enter the ID of the person you are looking for:");
         int inputId = enterNumber();
-        InsuredPerson foundPerson = database.findById(inputId);
+        PersonI foundPerson = database.findById(inputId);
 
         if (foundPerson == null) {
             System.out.println("The database does not contain the ID you entered");
         } else {
             System.out.println(foundPerson);
-            String newName = enterLetters("new name");
-            String newSurname = enterLetters("new surname");
-            String newTel = enterNumberOfPhone();
+            String newName = enterUserName("new name");
+            String newSurname = enterUserName("new surname");
+            String newTel = enterPhoneNumber();
 
             database.editPerson(inputId, newName, newSurname, newTel);
             System.out.println("The person has been modified to:\n" + foundPerson);
@@ -134,10 +204,10 @@ public class UserInterface {
         System.out.println("Enter a path of the folder where you would like to save the file");
         String userPath = sc.nextLine().trim();
         Path filePath = Paths.get(userPath, fileName);
-        Collection<InsuredPerson> persons = database.listOfAllPersons();
+        Collection<PersonI> persons = database.listOfAllPersons();
 
         try (BufferedWriter w = Files.newBufferedWriter(filePath, StandardOpenOption.CREATE)) {
-            for (InsuredPerson person : persons) {
+            for (PersonI person : persons) {
                 w.write(String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge()));
             }
             System.out.println("The file was created");
@@ -146,62 +216,4 @@ public class UserInterface {
         }
     }
 
-    private String enterLetters(String inputName) {
-        while (true) {
-            System.out.printf("Enter the %s:\n", inputName);
-            String name = sc.nextLine().trim();
-            if (!containsInvalidCharacters(name) && !name.isEmpty()) {
-                return name;
-            }
-            System.out.println("You must enter only letters of the alphabet");
-        }
-    }
-
-    private boolean containsInvalidCharacters(String input) {
-        return !input.chars().allMatch(letter -> Character.isAlphabetic(letter) || letter == ' ' || letter == '-');
-    }
-
-    private int enterNumber() {
-        while (true) {
-            String inputNumber = sc.nextLine().trim();
-
-            if (isValidNumber(inputNumber) && !inputNumber.isEmpty()) {
-                return Integer.parseInt(inputNumber);
-            } else {
-                System.out.println("Invalid number");
-            }
-        }
-    }
-
-    private String enterNumberOfPhone() {
-        while (true) {
-            System.out.println("Enter the phone number (9 digits without the area code):");
-            String inputPhoneNumber = sc.nextLine().trim();
-
-            if (!isValidNumber(inputPhoneNumber) && !inputPhoneNumber.isEmpty()) {
-                System.out.println("The phone number cannot contain letters or special characters and must be 9-digit number");
-            } else if (inputPhoneNumber.length() != 9) {
-                System.out.println("Enter a 9-digit number");
-            } else {
-                return inputPhoneNumber;
-            }
-        }
-    }
-
-    private int enterAge() {
-        System.out.println("Enter the age:");
-        while (true) {
-            int age = enterNumber();
-
-            if ((age > 0 && age <= 100)) {
-                return age;
-            } else {
-                System.out.println("The age must be in the range of 1-100");
-            }
-        }
-    }
-
-    private boolean isValidNumber(String input) {
-        return input.chars().allMatch(Character::isDigit);
-    }
 }
