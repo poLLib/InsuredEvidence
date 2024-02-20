@@ -22,10 +22,6 @@ public class PersonDatabase {
     /**
      * Adding a new insured individual into the database. Each new initialization increases the ID.
      *
-     * @param name of the insured individual
-     * @param surname of the insured individual
-     * @param phone of the insured individual
-     * @param age of the insured individual
      */
     public void addPerson(String name, String surname, String phone, int age) {
         PersonImpl newPerson = new PersonImpl(nextId++, name, surname, phone, age);
@@ -42,7 +38,7 @@ public class PersonDatabase {
      * @param inputName a name or part of name to be asked for
      * @return LinkedHashMap of searched persons
      */
-    public Collection<PersonI> findSpecificPerson(String inputName) {
+    public Collection<PersonImpl> findSpecificPerson(String inputName) {
         return personsMap.values().stream()
                 .filter(person -> person.getName().contains(inputName) || person.getSurname().contains(inputName))
                 .toList();
@@ -83,7 +79,7 @@ public class PersonDatabase {
         return personsMap.get(id);
     }
 
-    private static class PersonImpl implements PersonI {
+    public static class PersonImpl implements PersonI {
         private String name;
         private String surname;
         private String phone;

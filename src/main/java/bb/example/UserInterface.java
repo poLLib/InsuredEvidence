@@ -147,12 +147,11 @@ public class UserInterface {
     }
 
     private void displayAllInsured() {
-        // Output if the database is empty
         Collection<PersonI> persons = database.listOfAllPersons();
         if (persons.isEmpty()) {
             System.out.println("No insured individuals are recorded in the database");
         }
-        persons.forEach(System.out::println); // Display from the database
+        persons.forEach(System.out::println);
     }
 
     private void displayInsured() {
@@ -160,10 +159,9 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        Collection<PersonI> foundPersons = database.findSpecificPerson(inputNameSurname);
+        Collection<PersonDatabase.PersonImpl> foundPersons = database.findSpecificPerson(inputNameSurname);
         foundPersons.forEach(System.out::println);
 
-        // Output if the database is empty or the searched insured individual is not recorded
         if (foundPersons.isEmpty()) {
             System.out.println("This name is not recorded in the database");
         }
