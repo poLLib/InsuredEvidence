@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Scanner;
 
 /**
- * The class interacts with the user
+ * The class interacts with the user.
  *
  * @author pollib
  */
@@ -186,7 +186,8 @@ public class UserInterface {
     }
 
     private void deleteInsured() {
-        System.out.println("Enter the ID of the person you would like to delete");
+        database.listOfAllPersons();
+        System.out.println("\nEnter the ID of the person you would like to delete");
         int inputId = enterNumber();
 
         if (database.deletePerson(inputId)) {
