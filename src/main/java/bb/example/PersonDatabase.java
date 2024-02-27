@@ -13,10 +13,11 @@ import java.util.TreeMap;
 
 public class PersonDatabase {
     private final SortedMap<Integer, PersonImpl> personsMap;
+
     private int nextId = 1;
 
     public PersonDatabase() {
-        personsMap = new TreeMap<>();
+        personsMap = Collections.synchronizedSortedMap(new TreeMap<>());
     }
 
     /**
