@@ -10,9 +10,8 @@ import java.util.TreeMap;
  *
  * @author pollib
  */
-
 public class PersonDatabase {
-    private final SortedMap<Integer, PersonImpl> personsMap;
+    private final SortedMap<Integer, PersonI> personsMap;
 
     private int nextId = 1;
 
@@ -24,9 +23,9 @@ public class PersonDatabase {
      * Adding a new insured individual into the database. Each new initialization increases the ID.
      *
      */
-    public void addPerson(String name, String surname, String phone, int age) {
-        PersonImpl newPerson = new PersonImpl(nextId++, name, surname, phone, age);
-        personsMap.put(newPerson.getId(), newPerson);
+    public void addPerson(PersonI person) {
+        person.setId(nextId++);
+        personsMap.put(person.getId(), person);
     }
 
     public Collection<PersonI> listOfAllPersons() {
@@ -39,7 +38,7 @@ public class PersonDatabase {
      * @param inputName a name or part of name to be asked for
      * @return LinkedHashMap of searched persons
      */
-    public Collection<PersonImpl> findSpecificPerson(String inputName) {
+    public Collection<PersonI> findSpecificPerson(String inputName) {
         return personsMap.values().stream()
                 .filter(person -> person.getName().contains(inputName) || person.getSurname().contains(inputName))
                 .toList();
@@ -78,62 +77,5 @@ public class PersonDatabase {
      */
     public PersonI findById(int id) {
         return personsMap.get(id);
-    }
-
-    public static class PersonImpl implements PersonI {
-        private String name;
-        private String surname;
-        private String phone;
-        private int age;
-        private final int id;
-
-        public PersonImpl(int id, String name, String surname, String phone, int age) {
-            this.id = id;
-            this.name = name;
-            this.surname = surname;
-            this.phone = phone;
-            this.age = age;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String newName) {
-            this.name = newName;
-        }
-
-        public String getSurname() {
-            return surname;
-        }
-
-        public void setSurname(String surname) {
-            this.surname = surname;
-        }
-
-        public String getPhone() {
-            return phone;
-        }
-
-        public void setPhone(String phone) {
-            this.phone = phone;
-        }
-
-        public int getAge() {
-            return age;
-        }
-
-        public void setAge(int age) {
-            this.age = age;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        @Override
-        public String toString() {
-            return "Insured person: " + name + " " + surname + ", phone: " + phone + ", age: " + age + ", ID-" + id;
-        }
     }
 }

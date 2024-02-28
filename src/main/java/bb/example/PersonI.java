@@ -18,4 +18,6 @@ public interface PersonI {
     void setAge(int age);
 
     int getId();
+
+    void setId(int id);
 }
