@@ -1,25 +1,38 @@
 package bb.example;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PersonDatabaseTest {
-
+    @Mock
+    PersonI mockedPerson;
+    @Mock
+    Collection<PersonI> mockedDatabase;
+    @InjectMocks
     PersonDatabase database;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
     @Test
     void addingNewPersonIntoDatabaseTest() {
         database.addPerson("John", "Doe", "123456789", 25);
-        PersonI addedPerson = database.findById(1);
+        mockedPerson = database.findById(1);
 
-        assertThat(addedPerson).isNotNull();
-        assertThat(addedPerson.getName()).isEqualTo("John");
-        assertThat(addedPerson.getSurname()).isEqualTo("Doe");
-        assertThat(addedPerson.getPhone()).isEqualTo("123456789");
-        assertThat(addedPerson.getAge()).isEqualTo(25);
+        assertThat(mockedPerson).isNotNull();
+        assertThat(mockedPerson.getName()).isEqualTo("John");
+        assertThat(mockedPerson.getSurname()).isEqualTo("Doe");
+        assertThat(mockedPerson.getPhone()).isEqualTo("123456789");
+        assertThat(mockedPerson.getAge()).isEqualTo(25);
     }
 
     @Test
@@ -29,9 +42,9 @@ class PersonDatabaseTest {
         database.addPerson("Stanley", "Kubrick", "357159456", 60);
         database.addPerson("Tim", "Burton", "789654123", 33);
 
-        Collection<PersonI> listPersons = database.listOfAllPersons();
+        mockedDatabase = database.listOfAllPersons();
 
-        assertThat(listPersons.size()).isEqualTo(4);
+        assertThat(mockedDatabase.size()).isEqualTo(4);
     }
 
     @Test
@@ -52,12 +65,12 @@ class PersonDatabaseTest {
         database.addPerson("John", "Doe", "123456789", 25);
 
         database.editPerson(1, "Honza", "Řezník", "735845657");
-        PersonI editedPerson = database.findById(1);
+        mockedPerson = database.findById(1);
 
-        assertThat(editedPerson.getId()).isEqualTo(1);
-        assertThat(editedPerson.getName()).isEqualTo("Honza");
-        assertThat(editedPerson.getSurname()).isEqualTo("Řezník");
-        assertThat(editedPerson.getPhone()).isEqualTo("735845657");
+        assertThat(mockedPerson.getId()).isEqualTo(1);
+        assertThat(mockedPerson.getName()).isEqualTo("Honza");
+        assertThat(mockedPerson.getSurname()).isEqualTo("Řezník");
+        assertThat(mockedPerson.getPhone()).isEqualTo("735845657");
     }
 
     @Test
@@ -67,12 +80,12 @@ class PersonDatabaseTest {
         database.addPerson("Stanley", "Kubrick", "357159456", 60);
 
         database.deletePerson(1);
-        Collection<PersonI> databaseAfterDelete = database.listOfAllPersons();
-        PersonI personIdTwo = database.findById(2);
+        mockedDatabase = database.listOfAllPersons();
+        mockedPerson = database.findById(2);
 
-        assertThat(databaseAfterDelete.size()).isEqualTo(2);
-        assertThat(personIdTwo.getId()).isEqualTo(2);
-        assertThat(personIdTwo.getName()).isEqualTo("Jim");
+        assertThat(mockedDatabase.size()).isEqualTo(2);
+        assertThat(mockedPerson.getId()).isEqualTo(2);
+        assertThat(mockedPerson.getName()).isEqualTo("Jim");
 
     }
 }
