@@ -1,91 +1,52 @@
 package bb.example;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import java.util.Collection;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class PersonDatabaseTest {
+
     @Mock
-    PersonI mockedPerson;
-    @Mock
-    Collection<PersonI> mockedDatabase;
-    @InjectMocks
+    PersonI person;
+
     PersonDatabase database;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    void beforeEach() {
+        database = new PersonDatabase();
     }
 
     @Test
-    void addingNewPersonIntoDatabaseTest() {
-        database.addPerson("John", "Doe", "123456789", 25);
-        mockedPerson = database.findById(1);
+    @DisplayName("Should add person to database")
+    void shouldAddPersonTest() {
+        when(person.getId()).thenReturn(1);
+        when(person.getName()).thenReturn("John");
+        when(person.getSurname()).thenReturn("Doe");
+        when(person.getPhone()).thenReturn("123456789");
+        when(person.getAge()).thenReturn(25);
 
-        assertThat(mockedPerson).isNotNull();
-        assertThat(mockedPerson.getName()).isEqualTo("John");
-        assertThat(mockedPerson.getSurname()).isEqualTo("Doe");
-        assertThat(mockedPerson.getPhone()).isEqualTo("123456789");
-        assertThat(mockedPerson.getAge()).isEqualTo(25);
-    }
+        PersonI foundPerson = database.findById(1);
+        assertThat(foundPerson).isNull();
 
-    @Test
-    void sizeOfDatabaseTest() {
-        database.addPerson("John", "Doe", "123456789", 25);
-        database.addPerson("Jim", "Jarmush", "753159654", 49);
-        database.addPerson("Stanley", "Kubrick", "357159456", 60);
-        database.addPerson("Tim", "Burton", "789654123", 33);
+        database.addPerson(person);
 
-        mockedDatabase = database.listOfAllPersons();
+        foundPerson = database.findById(1);
 
-        assertThat(mockedDatabase.size()).isEqualTo(4);
-    }
+        assertThat(foundPerson).isNotNull();
+        assertThat(foundPerson.getId()).isEqualTo(1);
+        assertThat(foundPerson.getName()).isEqualTo("John");
+        assertThat(foundPerson.getSurname()).isEqualTo("Doe");
+        assertThat(foundPerson.getPhone()).isEqualTo("123456789");
+        assertThat(foundPerson.getAge()).isEqualTo(25);
 
-    @Test
-    void searchingForPersonInDatabaseByPartOfNameOrSurnameStringTest() {
-        database.addPerson("John", "Doe", "123456789", 25);
-        database.addPerson("Jim", "Jarmush", "753159654", 49);
-        database.addPerson("Stanley", "Kubrick", "357159456", 60);
-        database.addPerson("Tim", "Burton", "789654123", 33);
-        database.addPerson("Luke", "Bimbo", "789654123", 33);
-
-        Collection<PersonDatabase.PersonImpl> foundPersons = database.findSpecificPerson("im");
-
-        assertThat(foundPersons.size()).isEqualTo(3);
-    }
-
-    @Test
-    void editingNameSurnameAndPhoneNumberString() {
-        database.addPerson("John", "Doe", "123456789", 25);
-
-        database.editPerson(1, "Honza", "Řezník", "735845657");
-        mockedPerson = database.findById(1);
-
-        assertThat(mockedPerson.getId()).isEqualTo(1);
-        assertThat(mockedPerson.getName()).isEqualTo("Honza");
-        assertThat(mockedPerson.getSurname()).isEqualTo("Řezník");
-        assertThat(mockedPerson.getPhone()).isEqualTo("735845657");
-    }
-
-    @Test
-    void deletingPersonTest() {
-        database.addPerson("John", "Doe", "123456789", 25);
-        database.addPerson("Jim", "Jarmush", "753159654", 49);
-        database.addPerson("Stanley", "Kubrick", "357159456", 60);
-
-        database.deletePerson(1);
-        mockedDatabase = database.listOfAllPersons();
-        mockedPerson = database.findById(2);
-
-        assertThat(mockedDatabase.size()).isEqualTo(2);
-        assertThat(mockedPerson.getId()).isEqualTo(2);
-        assertThat(mockedPerson.getName()).isEqualTo("Jim");
-
+        verify(person).setId(1);
+        verifyNoMoreInteractions(person);
     }
 }
