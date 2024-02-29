@@ -63,7 +63,7 @@ public class UserInterface {
         String tel = enterPhoneNumber();
         int age = enterAge();
 
-        database.addPerson(name, surname, tel, age); // Add the insured person to the database
+        database.addPerson(new PersonImpl(name, surname, tel, age)); // Add the insured person to the database
         System.out.println("A new insured person has been added.");
     }
 
@@ -159,7 +159,7 @@ public class UserInterface {
         System.out.println("Enter the name or surname:");
         String inputNameSurname = sc.nextLine().trim();
 
-        Collection<PersonDatabase.PersonImpl> foundPersons = database.findSpecificPerson(inputNameSurname);
+        Collection<PersonI> foundPersons = database.findSpecificPerson(inputNameSurname);
         foundPersons.forEach(System.out::println);
 
         if (foundPersons.isEmpty()) {
