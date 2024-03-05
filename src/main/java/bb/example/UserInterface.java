@@ -1,6 +1,5 @@
 package bb.example;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,62 +14,54 @@ import java.util.Scanner;
  * @author pollib
  */
 public class UserInterface {
-    private final Scanner sc = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
     private final PersonDatabase database;
 
     public UserInterface(PersonDatabase database) {
         this.database = database;
     }
 
-    public void menuSelectionLoop() {
-        while (true) {
-            System.out.println("""
+    public String menuSelection(String inputOption) {
 
-                    --------Insured Records----------
+        int inputSelection = enterNumber(inputOption);
+        String result = "";
 
-                    Choose an action:
-                    1 - Add a new insured person
-                    2 - List all insured individuals
-                    3 - Search for an insured person
-                    4 - Modify an insured person
-                    5 - Delete an insured person
-                    6 - Create a file
-                    7 - End
-                    --------------------------------------
-                    Enter the action number:""");
-
-            int inputOption = enterNumber();
-
-            switch (inputOption) {
-                case 1 -> addInsured();
-                case 2 -> displayAllInsured();
-                case 3 -> displayInsured();
-                case 4 -> modifyInsured();
-                case 5 -> deleteInsured();
-                case 6 -> createFile();
-                case 7 -> {
-                    System.out.print("Goodbye");
-                    return;
-                }
-                default -> System.out.println("Enter number from 1 to 7");
-            }
+        switch (inputSelection) {
+            case 1 -> result = addInsured();
+            case 2 -> result = displayAllInsured();
+            case 3 -> result = displayInsured();
+            case 4 -> result = modifyInsured();
+            case 5 -> result = deleteInsured();
+            case 6 -> result = createFile();
+            case 7 -> result = "Goodbye";
+            default -> result = "Enter number from 1 to 7";
         }
+        return result;
     }
 
-    private void addInsured() {
+    private int enterNumber(String input) {
+        while (isValidNumber(input) || input.isEmpty()) {
+            System.out.println("Invalid number. Please enter number.");
+            input = scanner.nextLine();
+        }
+        return Integer.parseInt(input);
+    }
+
+    private String addInsured() {
         String name = enterUserName("name");
         String surname = enterUserName("surname");
         String tel = enterPhoneNumber();
         int age = enterAge();
 
         database.addPerson(new PersonImpl(name, surname, tel, age)); // Add the insured person to the database
-        System.out.println("A new insured person has been added.");
+
+        return "A new insured person has been added.";
     }
 
     private String enterUserName(String name) {
         while (true) {
             System.out.printf("Enter the %s:\n", name);
-            String userName = sc.nextLine().trim();
+            String userName = scanner.nextLine().trim();
 
             if (doesContainsChar(userName)) {
                 return userName;
@@ -92,7 +83,7 @@ public class UserInterface {
     private String enterPhoneNumber() {
         while (true) {
             System.out.println("Enter the phone number (9 digits without the area code):");
-            String userPhoneNumber = sc.nextLine().trim();
+            String userPhoneNumber = scanner.nextLine().trim();
 
             if (doesContainNineDigitString(userPhoneNumber)) {
                 return userPhoneNumber;
@@ -101,7 +92,7 @@ public class UserInterface {
     }
 
     private boolean doesContainNineDigitString(String string) {
-        if (!isValidNumber(string) && !string.isEmpty()) {
+        if (isValidNumber(string) && !string.isEmpty()) {
             System.out.println("The phone number cannot contain letters or special characters and must be 9-digit number");
         } else if (string.length() != 9) {
             System.out.println("Enter a 9-digit number");
@@ -112,28 +103,16 @@ public class UserInterface {
     }
 
     private boolean isValidNumber(String input) {
-        return input.chars().allMatch(Character::isDigit);
+        return !input.chars().allMatch(Character::isDigit);
     }
 
     private int enterAge() {
         System.out.println("Enter the age:");
         while (true) {
-            int age = enterNumber();
+            int age = enterNumber(scanner.nextLine().trim());
 
             if (doesContainRangeOfDigits(age)) {
                 return age;
-            }
-        }
-    }
-
-    private int enterNumber() {
-        while (true) {
-            String inputNumber = sc.nextLine().trim();
-
-            if (isValidNumber(inputNumber) && !inputNumber.isEmpty()) {
-                return Integer.parseInt(inputNumber);
-            } else {
-                System.out.println("Invalid number");
             }
         }
     }
@@ -146,34 +125,43 @@ public class UserInterface {
         return true;
     }
 
-    private void displayAllInsured() {
+    private String displayAllInsured() {
         Collection<PersonI> persons = database.listOfAllPersons();
         if (persons.isEmpty()) {
-            System.out.println("No insured individuals are recorded in the database");
+            return "No insured individuals are recorded in the database";
         }
-        persons.forEach(System.out::println);
+        StringBuilder result = new StringBuilder();
+        for (PersonI person : persons) {
+            result.append(person).append("\n");
+        }
+        return result.toString();
     }
 
-    private void displayInsured() {
+    private String displayInsured() {
 
         System.out.println("Enter the name or surname:");
-        String inputNameSurname = sc.nextLine().trim();
+        String inputNameSurname = scanner.nextLine().trim();
 
         Collection<PersonI> foundPersons = database.findSpecificPerson(inputNameSurname);
-        foundPersons.forEach(System.out::println);
+        StringBuilder result = new StringBuilder();
+        for (PersonI person : foundPersons) {
+            result.append(person).append("\n");
+        }
 
         if (foundPersons.isEmpty()) {
-            System.out.println("This name is not recorded in the database");
+            return "This name is not recorded in the database";
         }
+        return result.toString();
     }
 
-    private void modifyInsured() {
+    private String modifyInsured() {
         System.out.println("Enter the ID of the person you are looking for:");
-        int inputId = enterNumber();
+        String input = scanner.nextLine();
+        int inputId = enterNumber(input);
         PersonI foundPerson = database.findById(inputId);
 
         if (foundPerson == null) {
-            System.out.println("The database does not contain the ID you entered");
+            return "The database does not contain the ID you entered";
         } else {
             System.out.println(foundPerson);
             String newName = enterUserName("new name");
@@ -181,38 +169,40 @@ public class UserInterface {
             String newTel = enterPhoneNumber();
 
             database.editPerson(inputId, newName, newSurname, newTel);
-            System.out.println("The person has been modified to:\n" + foundPerson);
+            return "The person has been modified to:\n" + foundPerson;
         }
     }
 
-    private void deleteInsured() {
+    private String deleteInsured() {
         database.listOfAllPersons();
-        System.out.println("\nEnter the ID of the person you would like to delete");
-        int inputId = enterNumber();
+        System.out.println("Enter the ID of the person you would like to delete");
+        String input = scanner.nextLine().trim();
+        int inputId = enterNumber(input);
 
         if (database.deletePerson(inputId)) {
-            System.out.println("The insured individual has been deleted");
+            return "The insured individual has been deleted";
         } else {
-            System.out.println("Person with the given ID not found");
+            return "Person with the given ID not found";
         }
     }
 
-    private void createFile() {
+    private String createFile() {
         System.out.println("Enter a name of the file");
-        String fileName = sc.nextLine().trim() + ".txt";
-        System.out.println("Enter a path of the folder where you would like to save the file");
-        String userPath = sc.nextLine().trim();
-        Path filePath = Paths.get(userPath, fileName);
+        String fileName = scanner.nextLine().trim() + ".txt";
+        System.out.println("Enter a name of the folder where you would like to save the file");
+        String userDirectory = scanner.nextLine().trim();
+        Path filePath = Paths.get(userDirectory, fileName);
         Collection<PersonI> persons = database.listOfAllPersons();
 
-        try (BufferedWriter w = Files.newBufferedWriter(filePath, StandardOpenOption.CREATE)) {
+        try {
+            Files.createDirectories(filePath.getParent());
+            Files.writeString(filePath, "Database of insured persons:" + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             for (PersonI person : persons) {
-                w.write(String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge()));
+                Files.writeString(filePath, String.format("%s, %s, %s, %d" + System.lineSeparator(), person.getName(), person.getSurname(), person.getPhone(), person.getAge()), StandardOpenOption.APPEND);
             }
-            System.out.println("The file was created");
+            return "The file was created";
         } catch (IOException e) {
-            System.err.println("An error occurred while creating the file: " + e.getMessage());
+            return "An error occurred while creating the file: " + e.getMessage();
         }
     }
-
 }
