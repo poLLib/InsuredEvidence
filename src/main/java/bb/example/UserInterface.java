@@ -1,6 +1,5 @@
 package bb.example;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -190,14 +189,16 @@ public class UserInterface {
     private String createFile() {
         System.out.println("Enter a name of the file");
         String fileName = scanner.nextLine().trim() + ".txt";
-        System.out.println("Enter a path of the folder where you would like to save the file");
-        String userPath = scanner.nextLine().trim();
-        Path filePath = Paths.get(userPath, fileName);
+        System.out.println("Enter a name of the folder where you would like to save the file");
+        String userDirectory = scanner.nextLine().trim();
+        Path filePath = Paths.get(userDirectory, fileName);
         Collection<PersonI> persons = database.listOfAllPersons();
 
-        try (BufferedWriter w = Files.newBufferedWriter(filePath, StandardOpenOption.CREATE)) {
+        try {
+            Files.createDirectories(filePath.getParent());
+            Files.writeString(filePath, "Database of insured persons:" + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             for (PersonI person : persons) {
-                w.write(String.format("%s, %s, %s, %d%n", person.getName(), person.getSurname(), person.getPhone(), person.getAge()));
+                Files.writeString(filePath, String.format("%s, %s, %s, %d" + System.lineSeparator(), person.getName(), person.getSurname(), person.getPhone(), person.getAge()), StandardOpenOption.APPEND);
             }
             return "The file was created";
         } catch (IOException e) {
