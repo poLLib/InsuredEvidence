@@ -24,7 +24,7 @@ public class UserInterface {
     public String menuSelection(String inputOption) {
 
         int inputSelection = enterNumber(inputOption);
-        String result = "";
+        String result;
 
         switch (inputSelection) {
             case 1 -> result = addInsured();
