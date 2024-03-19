@@ -11,7 +11,7 @@ import java.util.TreeMap;
  * @author pollib
  */
 public class PersonDatabase {
-    private final SortedMap<Integer, PersonI> personsMap;
+    private final SortedMap<Integer, Person> personsMap;
 
     private int nextId = 1;
 
@@ -23,12 +23,12 @@ public class PersonDatabase {
      * Adding a new insured individual into the database. Each new initialization increases the ID.
      *
      */
-    public void addPerson(PersonI person) {
-        person.setId(nextId++);
-        personsMap.put(person.getId(), person);
+    public void addPerson(String name, String surname, String phone, int age) {
+        Person newPerson = new Person(nextId++, name, surname, phone, age);
+        personsMap.put(newPerson.id(), newPerson);
     }
 
-    public Collection<PersonI> listOfAllPersons() {
+    public Collection<Person> listOfAllPersons() {
         return Collections.unmodifiableCollection(personsMap.values());
     }
 
@@ -38,9 +38,9 @@ public class PersonDatabase {
      * @param inputName a name or part of name to be asked for
      * @return LinkedHashMap of searched persons
      */
-    public Collection<PersonI> findSpecificPerson(String inputName) {
+    public Collection<Person> findSpecificPerson(String inputName) {
         return personsMap.values().stream()
-                .filter(person -> person.getName().contains(inputName) || person.getSurname().contains(inputName))
+                .filter(person -> person.name().contains(inputName) || person.surname().contains(inputName))
                 .toList();
     }
 
@@ -53,10 +53,9 @@ public class PersonDatabase {
      * @param newPhone the new phone number of the modifying person
      */
     public void editPerson(int id, String newName, String newSurname, String newPhone) {
-        PersonI person = findById(id);
-        person.setName(newName);
-        person.setSurname(newSurname);
-        person.setPhone(newPhone);
+        Person person = findById(id);
+        Person editedPerson = new Person(person.id(), newName, newSurname, newPhone, person.age());
+        personsMap.replace(person.id(), editedPerson);
     }
 
     /**
@@ -75,7 +74,7 @@ public class PersonDatabase {
      * @param id the ID of recorded person to be found
      * @return the person with given ID or (returns null if not found)
      */
-    public PersonI findById(int id) {
+    public Person findById(int id) {
         return personsMap.get(id);
     }
 }
