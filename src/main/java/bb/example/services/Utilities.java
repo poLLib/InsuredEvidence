@@ -2,6 +2,7 @@ package bb.example.services;
 
 import bb.example.Person;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -20,7 +21,7 @@ public class Utilities {
     }
 
     public static String saveFileTxt(String fileName, String userDirectory, Collection<Person> persons) {
-        Path filePath = Paths.get(userDirectory, fileName);
+        Path filePath = Paths.get(System.getProperty("user.home") + File.separator + userDirectory, fileName);
 
         try {
             Files.createDirectories(filePath.getParent());

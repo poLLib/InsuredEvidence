@@ -23,7 +23,7 @@ public class UserInterface {
         this.outputHandler = outputHandler;
     }
 
-    public void menuSelectionLoop() {
+    public void menuSelectionLoop(InputHandler inputHandler) {
         while (true) {
             System.out.println("""
 
@@ -40,7 +40,8 @@ public class UserInterface {
                     --------------------------------------
                     Enter the action number:""");
 
-            int inputOption = enterNumber(inputHandler.getInput());
+            String input = inputHandler.getInput();
+            int inputOption = enterNumber(input);
 
             switch (inputOption) {
                 case 1 -> outputHandler.print(addInsured());
@@ -73,7 +74,7 @@ public class UserInterface {
 
         database.addPerson(name, surname, tel, age); // Add the insured person to the database
 
-        return "A new insured person has been added.";
+        return "A new insured person has been successfully added.";
     }
 
     private String enterUserName(String name) {
@@ -92,7 +93,7 @@ public class UserInterface {
 
     private String enterPhoneNumber() {
         while (true) {
-            outputHandler.print("Enter the phone number (9 digits without the area code):");
+            System.out.println("Enter the phone number (9 digits without the area code):");
             String userPhoneNumber = inputHandler.getInput();
 
             if (doesContainNineDigitString(userPhoneNumber)) {
@@ -165,7 +166,7 @@ public class UserInterface {
             String newTel = enterPhoneNumber();
 
             database.editPerson(inputId, newName, newSurname, newTel);
-            return "The person has been modified to:\n" + person;
+            return "The person has been modified to:\n" + database.findById(inputId);
         }
     }
 
@@ -185,7 +186,7 @@ public class UserInterface {
     private String createFile() {
         System.out.println("Enter a name of the file");
         String fileName = inputHandler.getInput() + ".txt";
-        System.out.println("Enter a name of the folder where you would like to save the file");
+        System.out.println("Enter a name of the folder where you would like to save the file [USER.HOME]/...");
         String userDirectory = inputHandler.getInput();
 
         Collection<Person> persons = database.listOfAllPersons();
