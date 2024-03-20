@@ -23,27 +23,42 @@ public class UserInterface {
         this.outputHandler = outputHandler;
     }
 
-    public String menuSelection(String inputOption) {
+    public void menuSelectionLoop() {
+        while (true) {
+            System.out.println("""
 
+                    --------Insured Records----------
 
-        int inputSelection = enterNumber(inputOption);
-        String result;
+                    Choose an action:
+                    1 - Add a new insured person
+                    2 - List all insured individuals
+                    3 - Search for an insured person
+                    4 - Modify an insured person
+                    5 - Delete an insured person
+                    6 - Create a file
+                    7 - End
+                    --------------------------------------
+                    Enter the action number:""");
 
-        switch (inputSelection) {
-            case 1 -> result = addInsured();
-            case 2 -> result = displayAllInsured();
-            case 3 -> result = displayInsured();
-            case 4 -> result = modifyInsured();
-            case 5 -> result = deleteInsured();
-            case 6 -> result = createFile();
-            case 7 -> result = "Goodbye";
-            default -> result = "Enter number from 1 to 7";
+            int inputOption = enterNumber(inputHandler.getInput());
+
+            switch (inputOption) {
+                case 1 -> outputHandler.print(addInsured());
+                case 2 -> outputHandler.print(displayAllInsured());
+                case 3 -> outputHandler.print(displayInsured());
+                case 4 -> outputHandler.print(modifyInsured());
+                case 5 -> outputHandler.print(deleteInsured());
+                case 6 -> outputHandler.print(createFile());
+                case 7 -> {
+                    outputHandler.print("Goodbye");
+                    return;
+                }
+                default -> outputHandler.print("Enter number from 1 to 7");
+            }
         }
-        return result;
     }
-
     private int enterNumber(String input) {
-        while (Validators.isValidNumber(input)) {
+        while (!Validators.isValidNumber(input)) {
             outputHandler.print("Invalid number. Please enter number.");
             input = inputHandler.getInput();
         }
@@ -66,7 +81,7 @@ public class UserInterface {
             System.out.printf("Enter the %s:\n", name);
             String userName = inputHandler.getInput();
 
-            if (Validators.doesContainsChar(userName)) {
+            if (Validators.doesContainChar(userName)) {
                 return userName;
             } else {
                 outputHandler.print("You must enter only letters of the alphabet");
@@ -87,7 +102,7 @@ public class UserInterface {
     }
 
     private boolean doesContainNineDigitString(String string) {
-        if (Validators.isValidNumber(string)) {
+        if (!Validators.isValidNumber(string)) {
             outputHandler.print("The phone number cannot contain letters or special characters and must be 9-digit number");
         } else if (string.length() != 9) {
             outputHandler.print("Enter a 9-digit number");
