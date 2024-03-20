@@ -13,6 +13,6 @@ public class Main {
             /* Start of the user session loop
                The user selects a command by entering a number
              */
-        userInterface.menuSelectionLoop();
+        userInterface.menuSelectionLoop(scanner::nextLine);
     }
 }
