@@ -1,9 +1,9 @@
 package bb.example;
 
-import bb.example.services.IOHandler.InputHandler;
-import bb.example.services.IOHandler.OutputHandler;
 import bb.example.services.Utilities;
 import bb.example.services.Validators;
+import bb.example.services.iohandler.InputHandler;
+import bb.example.services.iohandler.OutputHandler;
 
 import java.util.Collection;
 
@@ -23,9 +23,9 @@ public class UserInterface {
         this.outputHandler = outputHandler;
     }
 
-    public void menuSelectionLoop(InputHandler inputHandler) {
+    public void menuSelectionLoop(InputHandler inputHandler, OutputHandler outputHandler) {
         while (true) {
-            System.out.println("""
+            outputHandler.print("""
 
                     --------Insured Records----------
 
@@ -44,12 +44,12 @@ public class UserInterface {
             int inputOption = enterNumber(input);
 
             switch (inputOption) {
-                case 1 -> outputHandler.print(addInsured());
-                case 2 -> outputHandler.print(displayAllInsured());
-                case 3 -> outputHandler.print(displayInsured());
-                case 4 -> outputHandler.print(modifyInsured());
-                case 5 -> outputHandler.print(deleteInsured());
-                case 6 -> outputHandler.print(createFile());
+                case 1 -> addInsured();
+                case 2 -> displayAllInsured();
+                case 3 -> displaySpecificInsured();
+                case 4 -> modifyInsured();
+                case 5 -> deleteInsured();
+                case 6 -> createFile();
                 case 7 -> {
                     outputHandler.print("Goodbye");
                     return;
@@ -66,7 +66,7 @@ public class UserInterface {
         return Integer.parseInt(input);
     }
 
-    private String addInsured() {
+    private void addInsured() {
         String name = enterUserName("name");
         String surname = enterUserName("surname");
         String tel = enterPhoneNumber();
@@ -74,12 +74,12 @@ public class UserInterface {
 
         database.addPerson(name, surname, tel, age); // Add the insured person to the database
 
-        return "A new insured person has been successfully added.";
+        outputHandler.print("A new insured person has been successfully added.");
     }
 
     private String enterUserName(String name) {
         while (true) {
-            System.out.printf("Enter the %s:\n", name);
+            outputHandler.print("Enter the " + name + ":");
             String userName = inputHandler.getInput();
 
             if (Validators.doesContainChar(userName)) {
@@ -93,7 +93,7 @@ public class UserInterface {
 
     private String enterPhoneNumber() {
         while (true) {
-            System.out.println("Enter the phone number (9 digits without the area code):");
+            outputHandler.print("Enter the phone number (9 digits without the area code):");
             String userPhoneNumber = inputHandler.getInput();
 
             if (doesContainNineDigitString(userPhoneNumber)) {
@@ -115,82 +115,86 @@ public class UserInterface {
 
 
     private int enterAge() {
-        System.out.println("Enter the age:");
+        outputHandler.print("Enter the age:");
         while (true) {
             int age = enterNumber(inputHandler.getInput());
 
-            if (Validators.doesContainRangeOfDigits(age)) {
+            if (Validators.isAgeValid(age)) {
                 return age;
             } else {
-                outputHandler.print("The age must be in the range of 1-100");
+                outputHandler.print("The age must be in the range of 0-150");
             }
         }
     }
 
 
-    private String displayAllInsured() {
+    private void displayAllInsured() {
         Collection<Person> persons = database.listOfAllPersons();
         if (persons.isEmpty()) {
-            return "No insured individuals are recorded in the database";
+            outputHandler.print("No insured individuals are recorded in the database");
         }
 
-        return Utilities.buildPersonsList(persons);
+        outputHandler.print(Utilities.buildPersonsList(persons));
     }
 
-    private String displayInsured() {
+    private void displaySpecificInsured() {
 
-        System.out.println("Enter the name or surname:");
+        outputHandler.print("Enter the name or surname:");
         String inputNameSurname = inputHandler.getInput();
 
         Collection<Person> persons = database.findSpecificPerson(inputNameSurname);
 
         if (persons.isEmpty()) {
-            return "This name is not recorded in the database";
+            outputHandler.print("This name is not recorded in the database");
         } else {
-            return Utilities.buildPersonsList(persons);
+            outputHandler.print(Utilities.buildPersonsList(persons));
         }
     }
 
-    private String modifyInsured() {
+    private void modifyInsured() {
         outputHandler.print("Enter the ID of the person you are looking for:");
         String input = inputHandler.getInput();
         int inputId = enterNumber(input);
         Person person = database.findById(inputId);
 
         if (person == null) {
-            return "The database does not contain the ID you entered";
+            outputHandler.print("The database does not contain the ID you entered");
         } else {
-            System.out.println(person);
+            outputHandler.print(String.valueOf(person));
             String newName = enterUserName("new name");
             String newSurname = enterUserName("new surname");
             String newTel = enterPhoneNumber();
 
-            database.editPerson(inputId, newName, newSurname, newTel);
-            return "The person has been modified to:\n" + database.findById(inputId);
+            if (Validators.isValidNumber(newTel) && doesContainNineDigitString(newTel)) {
+                database.editPerson(inputId, newName, newSurname, newTel);
+                outputHandler.print("The person has been modified to:\n" + database.findById(inputId));
+            } else {
+                outputHandler.print("Invalid phone number format.");
+            }
         }
     }
 
-    private String deleteInsured() {
-        System.out.println(database.listOfAllPersons());
+    private void deleteInsured() {
+        outputHandler.print(String.valueOf(database.listOfAllPersons()));
         outputHandler.print("Enter the ID of the person you would like to delete");
         String input = inputHandler.getInput();
         int inputId = enterNumber(input);
 
         if (database.deletePerson(inputId)) {
-            return "The insured individual has been deleted";
+            outputHandler.print("The insured individual has been deleted");
         } else {
-            return "Person with the given ID not found";
+            outputHandler.print("Person with the given ID not found");
         }
     }
 
-    private String createFile() {
-        System.out.println("Enter a name of the file");
+    private void createFile() {
+        outputHandler.print("Enter a name of the file");
         String fileName = inputHandler.getInput() + ".txt";
-        System.out.println("Enter a name of the folder where you would like to save the file [USER.HOME]/...");
+        outputHandler.print("Enter a name of the folder where you would like to save the file [USER.HOME]/...");
         String userDirectory = inputHandler.getInput();
 
         Collection<Person> persons = database.listOfAllPersons();
 
-        return Utilities.saveFileTxt(fileName, userDirectory, persons);
+        outputHandler.print(Utilities.saveFileTxt(fileName, userDirectory, persons));
     }
 }

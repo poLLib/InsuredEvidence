@@ -9,17 +9,25 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
+/**
+ * The class provides service for UI.
+ *
+ * @author pollib
+ */
 public class Utilities {
 
     public static String buildPersonsList(Collection<Person> persons) {
-        StringBuilder result = new StringBuilder();
-        for (Person person : persons) {
-            result.append(person).append("\n");
-        }
-        return result.toString();
+        return persons.stream().map(Person::toString).collect(Collectors.joining("\n"));
     }
 
+    /**
+     * @param fileName      will name user. It will create .txt file.
+     * @param userDirectory always starts in home directory. User will add the directory address further.
+     * @param persons       database
+     * @return message if the creation was successful.
+     */
     public static String saveFileTxt(String fileName, String userDirectory, Collection<Person> persons) {
         Path filePath = Paths.get(System.getProperty("user.home") + File.separator + userDirectory, fileName);
 
