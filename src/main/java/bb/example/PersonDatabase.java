@@ -21,13 +21,17 @@ public class PersonDatabase {
 
     /**
      * Adding a new insured individual into the database. Each new initialization increases the ID.
-     *
      */
     public void addPerson(String name, String surname, String phone, int age) {
         Person newPerson = new Person(nextId++, name, surname, phone, age);
         personsMap.put(newPerson.id(), newPerson);
     }
 
+    /**
+     * Collects every person in the database.
+     *
+     * @return Unmodifiable collection of persons
+     */
     public Collection<Person> listOfAllPersons() {
         return Collections.unmodifiableCollection(personsMap.values());
     }

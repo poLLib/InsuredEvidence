@@ -23,6 +23,12 @@ public class UserInterface {
         this.outputHandler = outputHandler;
     }
 
+    /**
+     * Main method displays choice of actions and goes in a loop until user exits.
+     *
+     * @param inputHandler User input
+     * @param outputHandler Print of program's output
+     */
     public void menuSelectionLoop(InputHandler inputHandler, OutputHandler outputHandler) {
         while (true) {
             outputHandler.print("""

@@ -18,15 +18,24 @@ import java.util.stream.Collectors;
  */
 public class Utilities {
 
+
+    /**
+     * Creates a readable list of people below each other.
+     *
+     * @param persons Collection of persons for the list
+     * @return String of list of the people
+     */
     public static String buildPersonsList(Collection<Person> persons) {
         return persons.stream().map(Person::toString).collect(Collectors.joining("\n"));
     }
 
     /**
-     * @param fileName      will name user. It will create .txt file.
-     * @param userDirectory always starts in home directory. User will add the directory address further.
-     * @param persons       database
-     * @return message if the creation was successful.
+     * Saves the database into the text file.
+     *
+     * @param fileName      Name of the file to be saved
+     * @param userDirectory Directory where the file will be saved, default is home directory, user can adjust it
+     * @param persons       Database of the people
+     * @return String whether the creation was successful or not
      */
     public static String saveFileTxt(String fileName, String userDirectory, Collection<Person> persons) {
         Path filePath = Paths.get(System.getProperty("user.home") + File.separator + userDirectory, fileName);
